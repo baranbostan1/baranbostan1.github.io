@@ -66,6 +66,10 @@ const shareImage = absolute(ogImage ?? `/og/og-${locale}.jpg`);
           var still = m('(prefers-reduced-motion: reduce)').matches || !!(c && c.saveData);
           var rich = m('(min-width: 1024px)').matches && m('(hover: hover) and (pointer: fine)').matches;
           document.documentElement.dataset.cine = still ? 'static' : rich ? 'scrub' : 'play';
+          // Asıl betik yüklenemezse (ağ hatası, engelleyici) sahneler "önceki hâl"de kalmasın: son karelere dönülür.
+          window.setTimeout(function () {
+            if (!document.documentElement.hasAttribute('data-cine-ready')) document.documentElement.dataset.cine = 'static';
+          }, 6000);
         } catch (e) {}
       })();
     </script>

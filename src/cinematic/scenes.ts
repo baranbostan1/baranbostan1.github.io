@@ -85,9 +85,13 @@ export function playOnceInView(videos: readonly HTMLVideoElement[]): void {
     (entries) => {
       for (const entry of entries) {
         const video = entry.target as HTMLVideoElement;
-        if (!entry.isIntersecting || started.has(video)) continue;
+        if (!entry.isIntersecting) continue;
+        if (started.has(video)) {
+          // Tarayıcı görünmeyen videoyu duraklatmış olabilir; sahne yarım kalmasın diye görünüme dönünce sürdürülür.
+          if (video.paused && !video.ended && video.hasAttribute('data-ready')) video.play().catch(() => undefined);
+          continue;
+        }
         started.add(video);
-        player.unobserve(video);
         const fail = (error: unknown): void => {
           console.error('[sinematik]', error);
           markFailed(video);

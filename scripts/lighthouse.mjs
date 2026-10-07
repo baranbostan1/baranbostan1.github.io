@@ -21,12 +21,26 @@ if (!chromePath) {
 }
 mkdirSync(OUT_DIR, { recursive: true });
 
+// Lighthouse Windows'ta hatayla çıkınca açtığı tarayıcıyı kapatmadan bırakabilir (bir seferinde 51 pencere açık kaldı).
+// Her ölçümden sonra yalnızca Lighthouse'un geçici profiliyle açılmış süreçler kapatılır; kullanıcının tarayıcısına dokunulmaz.
+function closeLeftoverBrowsers() {
+  if (process.platform !== 'win32') return;
+  const command =
+    "Get-CimInstance Win32_Process -Filter \"Name = 'msedge.exe' OR Name = 'chrome.exe'\" | Where-Object { $_.CommandLine -match 'lighthouse\\.\\d+' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }";
+  try {
+    execFileSync('powershell', ['-NoProfile', '-NonInteractive', '-Command', command], { stdio: 'ignore' });
+  } catch {
+    // Temizlik başarısız olursa ölçüm yine geçerlidir.
+  }
+}
+
 let failures = 0;
 console.log(`Lighthouse (${preset})\n${'sayfa'.padEnd(36)} Perf  A11y  BP    SEO`);
 for (const route of ROUTES) {
   const name = `${preset}-${route.replace(/^\/|\/$/g, '').replace(/\//g, '_') || 'home'}.json`;
   const output = path.join(OUT_DIR, name);
-  const args = ['lighthouse', BASE_URL + route, '--quiet', '--output=json', `--output-path=${output}`, '--chrome-flags=--headless=new --no-sandbox', '--only-categories=performance,accessibility,best-practices,seo'];
+  // Bayraklar tek bir tırnaklı değer olarak verilir; aksi halde kabuk onları böler, tarayıcı görünür pencereyle açılır.
+  const args = ['lighthouse', BASE_URL + route, '--quiet', '--output=json', `--output-path=${output}`, '"--chrome-flags=--headless=new --no-sandbox"', '--only-categories=performance,accessibility,best-practices,seo'];
   if (preset === 'desktop') args.push('--preset=desktop');
   rmSync(output, { force: true });
   try {
@@ -35,6 +49,8 @@ for (const route of ROUTES) {
     // Windows'ta Lighthouse, raporu yazdıktan sonra geçici klasörünü silerken EPERM ile çıkabilir.
     // Rapor yazıldıysa ölçüm geçerlidir; yazılmadıysa hata gerçektir.
     if (!existsSync(output)) throw error;
+  } finally {
+    closeLeftoverBrowsers();
   }
   const { categories, audits } = JSON.parse(readFileSync(output, 'utf8'));
   const score = (id) => Math.round((categories[id]?.score ?? 0) * 100);

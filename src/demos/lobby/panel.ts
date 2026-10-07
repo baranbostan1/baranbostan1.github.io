@@ -5,7 +5,7 @@ import { LOBBY_STRINGS, ROOMS, WEEKEND_DAYS, type LobbyStrings } from './config'
 import { fetchJson } from './fetch-json';
 import { isWeekendRate } from './pricing';
 import { parseRates, RATE_URLS, type Rates } from './rates';
-import { parseWeather, WEATHER_URLS, type Weather } from './weather';
+import { parseWeather, roundTemperature, WEATHER_URLS, type Weather } from './weather';
 
 const STAGE_WIDTH = 1920;
 const STAGE_HEIGHT = 1080;
@@ -107,7 +107,7 @@ export function initLobbyPanel(root: HTMLElement): void {
     modeButtons.forEach((button) => button.setAttribute('aria-pressed', String((button.dataset.mode === 'weekend') === state.weekend)));
 
     const weather = state.weather.data;
-    temperature.textContent = weather ? `${degreeFormat.format(weather.temperatureC)}°` : '—';
+    temperature.textContent = weather ? `${degreeFormat.format(roundTemperature(weather.temperatureC))}°` : '—';
     weatherKind.textContent = weather ? strings.weather[weather.kind] : '';
     paintStatus(weatherStatus, state.weather);
 

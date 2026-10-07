@@ -33,6 +33,12 @@ function kindFor(code: number): WeatherKind {
   return KIND_RANGES.find(([min, max]) => code >= min && code <= max)?.[2] ?? 'cloudy';
 }
 
+/** En yakın tam dereceye yuvarlar; sıfırın hemen altı "-0" değil 0 olur. */
+export function roundTemperature(celsius: number): number {
+  const rounded = Math.round(celsius);
+  return rounded === 0 ? 0 : rounded;
+}
+
 /** Yanıt beklenen biçimde değilse ya da sıcaklık akla yatkın aralığın dışındaysa null döner. */
 export function parseWeather(json: unknown): Weather | null {
   if (!isRecord(json) || !isRecord(json.current)) return null;

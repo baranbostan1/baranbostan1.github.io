@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fetchJson } from '../src/demos/lobby/fetch-json';
 import { isWeekendRate } from '../src/demos/lobby/pricing';
 import { parseRates } from '../src/demos/lobby/rates';
-import { parseWeather } from '../src/demos/lobby/weather';
+import { parseWeather, roundTemperature } from '../src/demos/lobby/weather';
 import ratesFixture from './fixtures/rates-try.json';
 import weatherFixture from './fixtures/weather-current.json';
 
@@ -33,6 +33,32 @@ describe('parseRates', () => {
     ['try dizi', { try: [1, 2, 3] }],
   ])('%s → null', (_label, value) => {
     expect(parseRates(value)).toBeNull();
+  });
+});
+
+describe('parseRates: akla yatkınlık sınırı', () => {
+  it.each([
+    ['aşırı küçük değer (ters çevrilince saçma büyük kur)', { try: { usd: 1e-12, eur: 0.02, gbp: 0.0125 } }],
+    ['aşırı büyük değer (ters çevrilince sıfıra yakın kur)', { try: { usd: 0.025, eur: 5000, gbp: 0.0125 } }],
+  ])('%s → null', (_label, value) => {
+    expect(parseRates(value)).toBeNull();
+  });
+
+  it('sınırın içindeki uç değerleri kabul eder', () => {
+    expect(parseRates({ try: { usd: 1, eur: 0.001, gbp: 0.0125 } })).toEqual({ usd: 1, eur: 1000, gbp: 80 });
+  });
+});
+
+describe('roundTemperature', () => {
+  it('en yakın tam dereceye yuvarlar', () => {
+    expect(roundTemperature(17.6)).toBe(18);
+    expect(roundTemperature(-3.6)).toBe(-4);
+  });
+
+  it('sıfırın hemen altını eksi sıfır değil, sıfır yapar', () => {
+    expect(Object.is(roundTemperature(-0.4), 0)).toBe(true);
+    expect(Object.is(roundTemperature(-0.5), 0)).toBe(true);
+    expect(new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(roundTemperature(-0.4))).toBe('0');
   });
 });
 

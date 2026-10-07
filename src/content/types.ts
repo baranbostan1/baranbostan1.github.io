@@ -3,7 +3,6 @@
 export interface UiStrings {
   siteName: string;
   skipToContent: string;
-  switchLanguageLabel: string;
   switchLanguageName: string;
   footerNote: string;
   emailLabel: string;

@@ -3,7 +3,6 @@ import type { UiStrings } from '../content/types';
 export const ui: UiStrings = {
   siteName: 'Baran Berkay Bostan',
   skipToContent: 'Skip to content',
-  switchLanguageLabel: 'View this page in Turkish',
   switchLanguageName: 'Türkçe',
   footerNote: 'This site was built with AI-assisted development.',
   emailLabel: 'Email',

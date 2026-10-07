@@ -3,7 +3,6 @@ import type { UiStrings } from '../content/types';
 export const ui: UiStrings = {
   siteName: 'Baran Berkay Bostan',
   skipToContent: 'İçeriğe geç',
-  switchLanguageLabel: 'Sayfayı İngilizce görüntüle',
   switchLanguageName: 'English',
   footerNote: 'Bu site AI destekli geliştirmeyle yapıldı.',
   emailLabel: 'E-posta',

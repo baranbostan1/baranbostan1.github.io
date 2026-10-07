@@ -23,6 +23,7 @@ import { AGENCY_STRINGS, type AgencyStrings } from './strings';
 
 const FIELD_ORDER: readonly FieldName[] = ['agency', 'date', 'invoiceNo', 'amount'];
 const HIGHLIGHT_MS = 1600;
+const BLOB_URL_LIFETIME_MS = 10_000;
 
 interface State {
   ledger: Ledger;
@@ -95,7 +96,12 @@ export function initAgencyDemo(root: HTMLElement): void {
     memoryNote.hidden = saved;
     setState({ ledger, touched });
     window.clearTimeout(highlightTimer);
-    if (touched !== null) highlightTimer = window.setTimeout(() => setState({ touched: null }), HIGHLIGHT_MS);
+    if (touched === null) return;
+    // Vurgu yalnızca ilgili satırdan kaldırılır; her şeyi yeniden çizmek, kullanıcının o an açtığı bir listeyi kapatabilir.
+    highlightTimer = window.setTimeout(() => {
+      state = { ...state, touched: null };
+      balancesBody.querySelectorAll('[data-touched]').forEach((row) => row.removeAttribute('data-touched'));
+    }, HIGHLIGHT_MS);
   };
 
   const renderSummary = (): void => {
@@ -114,6 +120,7 @@ export function initAgencyDemo(root: HTMLElement): void {
 
   const balanceCell = (row: AgencyBalance): HTMLTableCellElement => {
     const cell = el('td', 'ag-num ag-balance', money(row.balanceKurus));
+    cell.setAttribute('role', 'cell');
     cell.dataset.label = strings.colBalance;
     // Durum yalnızca renkle değil, metinle de belirtilir.
     if (row.balanceKurus < 0) cell.append(el('span', 'ag-tag', strings.credit));
@@ -125,12 +132,16 @@ export function initAgencyDemo(root: HTMLElement): void {
     balancesBody.replaceChildren(
       ...balances.map((row) => {
         const tr = el('tr');
+        tr.setAttribute('role', 'row');
         if (state.touched !== null && agencyKey(row.agency) === agencyKey(state.touched)) tr.setAttribute('data-touched', '');
         const name = el('th', '', row.agency);
         name.scope = 'row';
+        name.setAttribute('role', 'rowheader');
         const invoiced = el('td', 'ag-num', money(row.invoicedKurus));
+        invoiced.setAttribute('role', 'cell');
         invoiced.dataset.label = strings.colInvoiced;
         const paid = el('td', 'ag-num', money(row.paidKurus));
+        paid.setAttribute('role', 'cell');
         paid.dataset.label = strings.colPaid;
         tr.append(name, invoiced, paid, balanceCell(row));
         return tr;
@@ -151,8 +162,9 @@ export function initAgencyDemo(root: HTMLElement): void {
     filterSelect.replaceChildren(
       all,
       ...balances.map((row) => {
+        // Değer olarak görünen ad değil anahtar tutulur: acentanın görünen yazımı sonradan değişse de seçim kaybolmaz.
         const option = el('option', '', row.agency);
-        option.value = row.agency;
+        option.value = agencyKey(row.agency);
         return option;
       }),
     );
@@ -161,8 +173,10 @@ export function initAgencyDemo(root: HTMLElement): void {
 
   const renderRecord = (record: LedgerRecord): HTMLTableRowElement => {
     const tr = el('tr');
+    tr.setAttribute('role', 'row');
     const cell = (label: string, text: string, className = ''): HTMLTableCellElement => {
       const td = el('td', className, text);
+      td.setAttribute('role', 'cell');
       td.dataset.label = label;
       return td;
     };
@@ -183,7 +197,9 @@ export function initAgencyDemo(root: HTMLElement): void {
       return;
     }
     const tr = el('tr');
+    tr.setAttribute('role', 'row');
     const td = el('td', 'ag-empty', strings.noRecords);
+    td.setAttribute('role', 'cell');
     td.colSpan = 5;
     tr.append(td);
     recordsBody.replaceChildren(tr);
@@ -258,7 +274,8 @@ export function initAgencyDemo(root: HTMLElement): void {
     link.href = url;
     link.download = strings.csvFileName;
     link.click();
-    URL.revokeObjectURL(url);
+    // Adres hemen iptal edilirse bazı tarayıcılar indirmeyi başlatamadan keser.
+    window.setTimeout(() => URL.revokeObjectURL(url), BLOB_URL_LIFETIME_MS);
   });
 
   required<HTMLButtonElement>(root, '[data-reset]').addEventListener('click', () => {

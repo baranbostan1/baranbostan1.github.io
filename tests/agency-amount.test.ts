@@ -15,7 +15,8 @@ describe('parseAmountToKurus', () => {
     ['1.234.567,89', 123456789],
     ['1,234,567.89', 123456789],
     ['10,999', 1099900], // tek ayırıcı + tam 3 hane her zaman binliktir
-    ['007', 700],
+    ['0,50', 50],
+    ['0.5', 50],
   ])('%j → %i kuruş', (input, expected) => {
     expect(parseAmountToKurus(input)).toBe(expected);
   });
@@ -26,6 +27,11 @@ describe('parseAmountToKurus', () => {
       expect(parseAmountToKurus(input)).toBeNull();
     },
   );
+
+  // Başta fazladan sıfır neredeyse her zaman yazım hatasıdır ("0.500" → 500 TL sayılmamalı).
+  it.each(['007', '0.500', '0,500', '01,50', '00', '00,10', '0.250,00'])('başında fazladan sıfır olan %j geçersizdir', (input) => {
+    expect(parseAmountToKurus(input)).toBeNull();
+  });
 
   it('kuruşları tam sayı olarak toplar; kayan nokta hatası olmaz', () => {
     expect(parseAmountToKurus('0,1')! + parseAmountToKurus('0,2')!).toBe(30);

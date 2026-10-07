@@ -6,7 +6,7 @@
 
 **Mimari:** Astro statik çıktı; tüm metinler iki dilli tipli içerik modüllerinde, sayfalar ve CV aynı kaynaktan beslenir. Sinematik katman (GSAP ScrollTrigger + Lenis) HTML'in üstüne eklenen bir geliştirmedir; kapalıyken site sabit karelerle eksiksiz okunur. Üç demo birbirinden bağımsız TypeScript modülleridir ve yalnızca kendi sayfasında yüklenir; hesap ve ayrıştırma mantığı arayüzden ayrı saf fonksiyonlardır.
 
-**Stack:** Astro (güncel), Tailwind CSS v4 (`@tailwindcss/vite`), TypeScript (strict), GSAP + ScrollTrigger, Lenis, Vitest, Fontsource, Playwright (yalnızca geliştirme: CV PDF ve OG görseli), ffmpeg (yerelde kurulu, 9.0.1), GitHub Actions (`withastro/action`).
+**Stack:** Astro (güncel), Tailwind CSS v4 (`@tailwindcss/vite`), TypeScript (strict), Lenis (GSAP planlanmıştı, kullanılmadı; bkz. `DECISIONS.md`), Vitest, Fontsource, Playwright (yalnızca geliştirme: CV PDF ve OG görseli), ffmpeg (yerelde kurulu, 9.0.1), GitHub Actions (`withastro/action`).
 
 **Spec:** `docs/design-spec.md` (bağlam: `PRODUCT.md`, `DECISIONS.md`, `CLAUDE.md`). Çelişkide spec geçerlidir.
 

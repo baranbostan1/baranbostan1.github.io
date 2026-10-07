@@ -17,18 +17,17 @@ function readEnv(): Env {
   };
 }
 
-// Başlığı kelime kelime belirtir. Ekran okuyucu tam cümleyi `aria-label`dan okur.
+// Başlığı kelime kelime belirtir. Kelimeler gerçek metin olarak kalır (gizlenmez, etiketle değiştirilmez):
+// ekran okuyucular cümleyi olduğu gibi okur, sayfa çevirmenleri de başlığı çevirebilir.
 function revealWords(heading: HTMLElement): void {
   const text = heading.textContent?.trim() ?? '';
   if (text === '') return;
   const words = text.split(/\s+/).map((word) => {
     const span = document.createElement('span');
     span.textContent = word;
-    span.setAttribute('aria-hidden', 'true');
     span.style.display = 'inline-block';
     return span;
   });
-  heading.setAttribute('aria-label', text);
   heading.replaceChildren(...words.flatMap((span, index) => (index === 0 ? [span] : [' ', span])));
   words.forEach((span, index) => {
     span.animate(
@@ -55,6 +54,8 @@ async function start(mode: Mode): Promise<void> {
   scrubWithScroll(heroVideo, heroTrack).catch((error) => {
     console.error('[sinematik]', error);
     heroVideo.closest<HTMLElement>('.scene-media')?.setAttribute('data-failed', '');
+    // Sarma çalışmıyorsa hero sabitlenmez; yoksa hiçbir şeyin değişmediği boş bir kaydırma mesafesi kalır.
+    document.documentElement.dataset.cine = 'play';
   });
   const [{ initSmoothScroll }, { initPointerEffects }] = await Promise.all([import('./smooth-scroll'), import('./pointer')]);
   initPointerEffects();
@@ -65,6 +66,8 @@ export function initCinematic(): void {
   try {
     const mode = pickMode(readEnv());
     document.documentElement.dataset.cine = mode;
+    // Satır içi betik bu işareti bekler; gelmezse (bu modül yüklenemediyse) sahneleri son karelerine döndürür.
+    document.documentElement.setAttribute('data-cine-ready', '');
     if (mode === 'static') return;
     start(mode).catch((error) => console.error('[sinematik]', error));
   } catch (error) {

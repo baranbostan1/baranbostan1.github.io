@@ -50,6 +50,8 @@ export function parseAmountToKurus(input: string): number | null {
   if (!ALLOWED.test(text)) return null;
   const parts = splitParts(text);
   if (parts === null || !DIGITS_ONLY.test(parts.whole)) return null;
+  // Başta fazladan sıfır ("007", "0.500") neredeyse her zaman yazım hatasıdır; sessizce yorumlanmaz.
+  if (parts.whole.length > 1 && parts.whole.startsWith('0')) return null;
   const kurus = Number(parts.whole) * KURUS_PER_LIRA + Number(parts.fraction.padEnd(2, '0'));
   if (!Number.isSafeInteger(kurus) || kurus <= 0 || kurus > MAX_AMOUNT_KURUS) return null;
   return kurus;

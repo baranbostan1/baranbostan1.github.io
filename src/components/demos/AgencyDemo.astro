@@ -88,22 +88,22 @@ const balances = agencyBalances(SEED);
 
     <section class="ag-balances" aria-labelledby={`ag-balances-${locale}`}>
       <h3 id={`ag-balances-${locale}`}>{s.balancesHeading}</h3>
-      <table class="ag-table">
-        <thead>
-          <tr>
-            <th scope="col">{s.colAgency}</th>
-            <th scope="col" class="ag-num">{s.colInvoiced}</th>
-            <th scope="col" class="ag-num">{s.colPaid}</th>
-            <th scope="col" class="ag-num">{s.colBalance}</th>
+      <table class="ag-table" role="table">
+        <thead role="rowgroup">
+          <tr role="row">
+            <th role="columnheader" scope="col">{s.colAgency}</th>
+            <th role="columnheader" scope="col" class="ag-num">{s.colInvoiced}</th>
+            <th role="columnheader" scope="col" class="ag-num">{s.colPaid}</th>
+            <th role="columnheader" scope="col" class="ag-num">{s.colBalance}</th>
           </tr>
         </thead>
-        <tbody data-balances>
+        <tbody data-balances role="rowgroup">
           {
             balances.map((row) => (
-              <tr>
-                <th scope="row">{row.agency}</th>
-                <td class="ag-num" data-label={s.colInvoiced}>{money(row.invoicedKurus)}</td>
-                <td class="ag-num" data-label={s.colPaid}>{money(row.paidKurus)}</td>
+              <tr role="row">
+                <th role="rowheader" scope="row">{row.agency}</th>
+                <td role="cell" class="ag-num" data-label={s.colInvoiced}>{money(row.invoicedKurus)}</td>
+                <td role="cell" class="ag-num" data-label={s.colPaid}>{money(row.paidKurus)}</td>
                 <td class="ag-num ag-balance" data-label={s.colBalance}>
                   {money(row.balanceKurus)}
                   {row.balanceKurus < 0 && <span class="ag-tag">{s.credit}</span>}
@@ -138,17 +138,17 @@ const balances = agencyBalances(SEED);
       </div>
     </div>
     <div class="ag-scroll" data-lenis-prevent tabindex="0" role="region" aria-labelledby={`ag-records-${locale}`}>
-      <table class="ag-table ag-table-records">
-        <thead>
-          <tr>
-            <th scope="col">{s.colDate}</th>
-            <th scope="col">{s.colType}</th>
-            <th scope="col">{s.colAgency}</th>
-            <th scope="col">{s.colInvoiceNo}</th>
-            <th scope="col" class="ag-num">{s.colAmount}</th>
+      <table class="ag-table ag-table-records" role="table">
+        <thead role="rowgroup">
+          <tr role="row">
+            <th role="columnheader" scope="col">{s.colDate}</th>
+            <th role="columnheader" scope="col">{s.colType}</th>
+            <th role="columnheader" scope="col">{s.colAgency}</th>
+            <th role="columnheader" scope="col">{s.colInvoiceNo}</th>
+            <th role="columnheader" scope="col" class="ag-num">{s.colAmount}</th>
           </tr>
         </thead>
-        <tbody data-records></tbody>
+        <tbody data-records role="rowgroup"></tbody>
       </table>
     </div>
     <div class="ag-actions">
