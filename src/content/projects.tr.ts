@@ -2,6 +2,7 @@ import type { ProjectContent } from './types';
 
 const qrMenu: ProjectContent = {
   id: 'qr-menu',
+  kind: 'real',
   title: 'QR Menü',
   summary: 'Erdek’te bir otelin restoranı için QR kodla açılan dijital menü ve içeriğini yöneten admin paneli.',
   sceneProblem: 'Basılı menüde her fiyat değişikliği yeniden baskı masrafıydı.',
@@ -26,6 +27,7 @@ const qrMenu: ProjectContent = {
 
 const agency: ProjectContent = {
   id: 'agency',
+  kind: 'real',
   title: 'Acenta Fatura ve Ödeme Takibi',
   summary: 'Acentalara kesilen faturaları ve gelen ödemeleri kaydedip acenta bazında bakiyeyi gösteren dahili araç. Muhasebe için değil, ön büro takibi için.',
   sceneProblem: 'Hangi acentanın ne kadar borcu olduğu tek bakışta görülemiyordu.',
@@ -50,6 +52,7 @@ const agency: ProjectContent = {
 
 const lobby: ProjectContent = {
   id: 'lobby',
+  kind: 'real',
   title: 'Lobi Bilgi Ekranı',
   summary: 'Erdek’te bir otelin resepsiyonunun karşısındaki TV için yaptığım, sezon boyunca 7/24 açık kalan web tabanlı bilgi paneli.',
   sceneProblem: 'Misafirlerin sık sorduğu bilgiler için sürekli açık bir ekran yoktu.',
@@ -73,4 +76,28 @@ const lobby: ProjectContent = {
   demoNote: 'Aşağıdaki panel kurgusal bir otelle çalışır. Saat, döviz kuru ve hava durumu gerçek ve canlıdır; gerçek panelle aynı iki API’den gelir.',
 };
 
-export const projects: readonly ProjectContent[] = [qrMenu, lobby, agency];
+const helpdesk: ProjectContent = {
+  id: 'helpdesk',
+  kind: 'concept',
+  title: 'Ofis IT Destek Talepleri',
+  summary: '20 kişilik bir ofisin IT destek taleplerini takip eden konsept bir araç: talep açılır, atanır, çözülünce kapanır.',
+  sceneProblem: 'Küçük ofislerde IT talepleri mesajla, sözle, yapışkan notla gelir; hangisinin beklediği unutulur.',
+  sceneResult: 'Otel dışında bir ortam için kurduğum konsept: taleplerin kimde olduğu ve ne kadardır beklediği tek ekranda.',
+  sceneAlt: 'Monitörün çevresine yapıştırılmış notlar, ekrandaki düzenli bir talep panosuna dönüşüyor.',
+  tags: ['TypeScript', 'localStorage', 'TDD'],
+  problem:
+    'Küçük bir ofiste destek talepleri dağınık kanallardan gelir: mesaj, koridorda söylenen bir cümle, monitöre yapıştırılmış bir not. Kimin neyi beklediği, hangi talebin acil olduğu ve hangisinin unutulduğu görünmez.',
+  solution:
+    'Talepleri tek yerde toplayan bir pano kurdum. Her talep önceliğine ve durumuna göre görünür; kimde olduğu, ne kadardır açık olduğu ve hedef süreyi aşıp aşmadığı yazar.',
+  technical: [
+    'TypeScript; backend yok, veriler yalnızca tarayıcıda (localStorage) durur.',
+    'Dört durum (Yeni, İşlemde, Kullanıcı bekleniyor, Çözüldü) ve aralarında izin verilen geçişler; atanmamış talep işleme alınamaz.',
+    'Önceliğe göre hedef süre: Acil 4 saat, Normal 24 saat, Düşük 72 saat. Hedefi aşan talep işaretlenir.',
+    'Durum geçişleri, doğrulama ve süre hesabı arayüzden ayrı fonksiyonlardır ve test-önce (TDD) yazıldı.',
+    'Durum düğmeyle değişir, sürükle-bırak yoktur; pano klavyeyle ve telefonda da kullanılır.',
+  ],
+  outcome: 'Konsept çalışma. Gerçek bir işletmede kullanılmadı; destek işinin mantığını ve otel dışında bir senaryoyu göstermek için yaptım.',
+  demoNote: 'Yeni bir talep açın, birine atayın, durumunu ilerletin ve çözün; üstteki özet anında değişir. Kişiler ve talepler uydurmadır; veriler yalnızca sizin tarayıcınızda durur.',
+};
+
+export const projects: readonly ProjectContent[] = [qrMenu, lobby, agency, helpdesk];

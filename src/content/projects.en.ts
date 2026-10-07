@@ -2,6 +2,7 @@ import type { ProjectContent } from './types';
 
 const qrMenu: ProjectContent = {
   id: 'qr-menu',
+  kind: 'real',
   title: 'QR Menu',
   summary: 'A digital menu opened by QR code, with an admin panel to manage it, built for the restaurant of a hotel in Erdek.',
   sceneProblem: 'With a printed menu, every price change meant paying for a reprint.',
@@ -26,6 +27,7 @@ const qrMenu: ProjectContent = {
 
 const agency: ProjectContent = {
   id: 'agency',
+  kind: 'real',
   title: 'Agency Invoice and Payment Tracker',
   summary: 'An internal tool that records invoices issued to travel agencies and the payments they make, and shows the balance per agency. Built for front-office tracking, not for accounting.',
   sceneProblem: 'There was no way to see at a glance how much each agency owed.',
@@ -49,6 +51,7 @@ const agency: ProjectContent = {
 
 const lobby: ProjectContent = {
   id: 'lobby',
+  kind: 'real',
   title: 'Lobby Information Display',
   summary: 'A web-based information panel I built for the TV facing the reception desk of a hotel in Erdek; it stayed on around the clock through the season.',
   sceneProblem: 'There was no always-on screen for the things guests ask about most.',
@@ -72,4 +75,28 @@ const lobby: ProjectContent = {
   demoNote: 'The panel below runs with a fictional hotel. The clock, exchange rates and weather are real and live; they come from the same two APIs as the real panel.',
 };
 
-export const projects: readonly ProjectContent[] = [qrMenu, lobby, agency];
+const helpdesk: ProjectContent = {
+  id: 'helpdesk',
+  kind: 'concept',
+  title: 'Office IT Helpdesk',
+  summary: 'A concept tool that tracks the IT support requests of a 20-person office: a request is opened, assigned, and closed once resolved.',
+  sceneProblem: 'In small offices, IT requests arrive by message, in passing, or on a sticky note; which one is still waiting gets forgotten.',
+  sceneResult: 'A concept I built for a setting outside the hotel: who has each request, and how long it has been waiting, on one screen.',
+  sceneAlt: 'Sticky notes stuck around a monitor turn into a tidy request board on the screen.',
+  tags: ['TypeScript', 'localStorage', 'TDD'],
+  problem:
+    'In a small office, support requests come through scattered channels: a message, a sentence said in the corridor, a note stuck on a monitor. Who is waiting for what, which request is urgent and which has been forgotten cannot be seen.',
+  solution:
+    'I built a board that gathers the requests in one place. Each request is shown by priority and status; it says who has it, how long it has been open, and whether it has passed its target time.',
+  technical: [
+    'TypeScript; no backend, data stays in the browser only (localStorage).',
+    'Four statuses (New, In progress, Waiting for user, Resolved) and the transitions allowed between them; an unassigned request cannot be started.',
+    'Target time by priority: Urgent 4 hours, Normal 24 hours, Low 72 hours. A request past its target is flagged.',
+    'Status transitions, validation and time calculation are functions kept apart from the interface and written test-first (TDD).',
+    'Status changes with a button, not drag and drop; the board works with a keyboard and on a phone.',
+  ],
+  outcome: 'Concept work. It was not used at a real business; I built it to show the logic of support work and a scenario outside the hotel.',
+  demoNote: 'Open a new request, assign it, move it along and resolve it; the summary at the top changes at once. The people and requests are made up; data stays in your own browser.',
+};
+
+export const projects: readonly ProjectContent[] = [qrMenu, lobby, agency, helpdesk];

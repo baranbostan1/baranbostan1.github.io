@@ -19,6 +19,10 @@ const EXPECTED: ReadonlyArray<[PageId, Locale, string]> = [
   ['demo-lobby', 'en', '/en/demo/lobby-display/'],
   ['demo-agency', 'tr', '/demo/acenta-takibi/'],
   ['demo-agency', 'en', '/en/demo/agency-ledger/'],
+  ['helpdesk', 'tr', '/projeler/destek-talepleri/'],
+  ['helpdesk', 'en', '/en/projects/helpdesk/'],
+  ['demo-helpdesk', 'tr', '/demo/destek-talepleri/'],
+  ['demo-helpdesk', 'en', '/en/demo/helpdesk/'],
 ];
 
 describe('pathFor', () => {
@@ -32,6 +36,7 @@ describe('demoPageFor', () => {
     expect(demoPageFor('qr-menu')).toBe('demo-qr-menu');
     expect(demoPageFor('lobby')).toBe('demo-lobby');
     expect(demoPageFor('agency')).toBe('demo-agency');
+    expect(demoPageFor('helpdesk')).toBe('demo-helpdesk');
   });
 });
 

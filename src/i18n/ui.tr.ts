@@ -21,5 +21,11 @@ export const ui: UiStrings = {
   scanHeading: 'Telefonunuzla deneyin',
   scanText: 'Kodu kameranızla okutun; menü, bir restoran masasında olduğu gibi telefonunuzda açılır.',
   fullscreenDemoTitle: 'Demo',
+  scenarioLabel: 'Senaryo',
+  statusLabel: 'Durum',
+  showsLabel: 'Ne gösteriyor',
+  conceptHeading: 'Konsept çalışma',
+  conceptBadge: 'Konsept',
+  conceptLead: 'Aşağıdaki proje gerçek bir işletmede kullanılmadı; otel dışında bir senaryo için kurduğum bir denemedir.',
   ogImageAlt: 'Gece, bir çalışma masasında yanan ekran; üstünde Baran Berkay Bostan adı ve “İşletmelerin gündelik sorunlarını, çalışan araçlara dönüştürüyorum.” cümlesi.',
 };

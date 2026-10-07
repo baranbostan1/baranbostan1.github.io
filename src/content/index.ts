@@ -20,8 +20,14 @@ export function getHome(locale: Locale): HomeContent {
   return HOME[locale];
 }
 
+/** Gerçek bir işletme için yapılmış ve kullanılmış projeler (ana sayfanın asıl listesi). */
 export function getProjects(locale: Locale): readonly ProjectContent[] {
-  return PROJECTS[locale];
+  return PROJECTS[locale].filter((project) => project.kind === 'real');
+}
+
+/** Konsept projeler: gerçek kullanımda değil; sitede ayrı başlık altında gösterilir. */
+export function getConceptProjects(locale: Locale): readonly ProjectContent[] {
+  return PROJECTS[locale].filter((project) => project.kind === 'concept');
 }
 
 export function getProject(id: ProjectId, locale: Locale): ProjectContent {

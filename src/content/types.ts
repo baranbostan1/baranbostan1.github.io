@@ -22,6 +22,12 @@ export interface UiStrings {
   scanHeading: string;
   scanText: string;
   fullscreenDemoTitle: string;
+  scenarioLabel: string;
+  statusLabel: string;
+  showsLabel: string;
+  conceptHeading: string;
+  conceptBadge: string;
+  conceptLead: string;
   ogImageAlt: string;
 }
 
@@ -32,10 +38,14 @@ export const CONTACT = {
   githubUrl: 'https://github.com/baranbostan1',
 } as const;
 
-export type ProjectId = 'qr-menu' | 'lobby' | 'agency';
+export type ProjectId = 'qr-menu' | 'lobby' | 'agency' | 'helpdesk';
+
+/** real: gerçek bir işletme için yapıldı ve kullanıldı · concept: deneme, gerçek kullanımda değil */
+export type ProjectKind = 'real' | 'concept';
 
 export interface ProjectContent {
   id: ProjectId;
+  kind: ProjectKind;
   /** Sayfa başlığı ve özet */
   title: string;
   summary: string;

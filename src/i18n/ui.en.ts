@@ -21,5 +21,11 @@ export const ui: UiStrings = {
   scanHeading: 'Try it on your phone',
   scanText: 'Scan the code with your camera; the menu opens on your phone, as it would at a restaurant table.',
   fullscreenDemoTitle: 'Demo',
+  scenarioLabel: 'Scenario',
+  statusLabel: 'Status',
+  showsLabel: 'What it shows',
+  conceptHeading: 'Concept work',
+  conceptBadge: 'Concept',
+  conceptLead: 'The project below was not used at a real business; it is an exercise I built for a scenario outside the hotel.',
   ogImageAlt: 'A lit screen on a desk at night, with the name Baran Berkay Bostan and the line “I turn the everyday problems of a business into working tools.”',
 };
