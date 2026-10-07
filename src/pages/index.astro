@@ -6,7 +6,7 @@ import Hero from '../components/home/Hero.astro';
 import HowIWork from '../components/home/HowIWork.astro';
 import LiveStrip from '../components/home/LiveStrip.astro';
 import ProjectScene from '../components/home/ProjectScene.astro';
-import { getHome, getProjects } from '../content';
+import { getConceptProjects, getHome, getProjects } from '../content';
 import { CONTACT } from '../content/types';
 import { getUi } from '../i18n/ui';
 import Base from '../layouts/Base.astro';
@@ -15,6 +15,7 @@ const locale = 'tr';
 const home = getHome(locale);
 const ui = getUi(locale);
 const projects = getProjects(locale);
+const conceptProjects = getConceptProjects(locale);
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -39,7 +40,50 @@ const person = {
       ))
     }
   </div>
+  <section class="concept" id="konsept" aria-labelledby="konsept-baslik">
+    <div class="concept-head">
+      <h2 id="konsept-baslik">{ui.conceptHeading}</h2>
+      <p>{ui.conceptLead}</p>
+    </div>
+    {conceptProjects.map((project) => <ProjectScene project={project} locale={locale} sceneAlt={project.sceneAlt} headingLevel={3} />)}
+  </section>
   <HowIWork locale={locale} />
   <About locale={locale} />
   <Contact locale={locale} />
 </Base>
+
+<style>
+  .concept {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .concept-head {
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: 5rem 1.25rem 0;
+  }
+
+  /* Bölüm başlığı ile sahne arasında tam bölüm boşluğu fazla gelir. */
+  .concept :global(.project) {
+    padding-top: 3rem;
+  }
+
+  .concept-head h2 {
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+    /* Hero ve İletişim başlıklarıyla aynı kesim. */
+    font-variation-settings: 'opsz' 144;
+  }
+
+  .concept-head p {
+    max-width: 48ch;
+    margin-top: 1.25rem;
+    font-size: 1.125rem;
+    line-height: 1.55;
+  }
+
+  @media (min-width: 640px) {
+    .concept-head {
+      padding-inline: 2rem;
+    }
+  }
+</style>

@@ -15,12 +15,19 @@ interface Props {
   sceneAlt: string;
   /** Görüntünün metnin hangi yanında duracağı (geniş ekranda) */
   mediaSide?: 'start' | 'end';
+  /** Bölüm kendi görünür başlığının altındaysa 3 verilir; görünüm aynı kalır */
+  headingLevel?: 2 | 3;
 }
 
-const { project, locale, sceneAlt, mediaSide = 'start' } = Astro.props;
+const { project, locale, sceneAlt, mediaSide = 'start', headingLevel = 2 } = Astro.props;
 const ui = getUi(locale);
 const home = getHome(locale);
 const headingId = `proje-${project.id}`;
+const Heading = headingLevel === 3 ? 'h3' : 'h2';
+// Konsept çalışma gerçek kullanım iddia etmez: "Sorun / Sonuç" yerine "Senaryo / Ne gösteriyor" yazılır.
+const isConcept = project.kind === 'concept';
+const problemLabel = isConcept ? ui.scenarioLabel : ui.problemLabel;
+const resultLabel = isConcept ? ui.showsLabel : ui.resultLabel;
 ---
 
 <section class="project" data-media-side={mediaSide} aria-labelledby={headingId}>
@@ -28,14 +35,17 @@ const headingId = `proje-${project.id}`;
     <Scene name={project.id} locale={locale} alt={sceneAlt} class="project-media" />
   </div>
   <div class="project-body">
-    <h2 id={headingId}>{project.title}</h2>
+    <div class="project-title">
+      <Heading id={headingId} class="project-heading">{project.title}</Heading>
+      {isConcept && <p class="concept-badge">{ui.conceptBadge}</p>}
+    </div>
     <dl>
       <div>
-        <dt>{ui.problemLabel}</dt>
+        <dt>{problemLabel}</dt>
         <dd>{project.sceneProblem}</dd>
       </div>
       <div>
-        <dt>{ui.resultLabel}</dt>
+        <dt>{resultLabel}</dt>
         <dd>{project.sceneResult}</dd>
       </div>
     </dl>
@@ -71,7 +81,23 @@ const headingId = `proje-${project.id}`;
     gap: 1.75rem;
   }
 
-  h2 {
+  .project-title {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    align-items: baseline;
+  }
+
+  .concept-badge {
+    padding: 0.25rem 0.625rem;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .project-heading {
     font-size: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
     /* Hero ve İletişim başlıklarıyla aynı kesim. */
     font-variation-settings: 'opsz' 144;

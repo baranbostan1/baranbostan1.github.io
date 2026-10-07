@@ -1,7 +1,7 @@
 ---
 // Özgeçmiş: ekranda sitenin koyu temasında, yazdırırken A4 tek sayfa, açık zemin.
 // İçerik sitenin geri kalanıyla aynı kaynaktan gelir; PDF bu sayfadan üretilir (scripts/build-cv-pdf.mjs).
-import { getCv, getProjects } from '../content';
+import { getConceptProjects, getCv, getProjects } from '../content';
 import { CONTACT } from '../content/types';
 import type { Locale } from '../i18n/locales';
 import { pathFor } from '../i18n/routes';
@@ -14,7 +14,7 @@ interface Props {
 const { locale } = Astro.props;
 const cv = getCv(locale);
 const ui = getUi(locale);
-const projects = getProjects(locale);
+const projects = [...getProjects(locale), ...getConceptProjects(locale)];
 const siteUrl = new URL(pathFor('home', locale), Astro.site);
 const absolute = (path: string) => new URL(path, Astro.site).href;
 const bare = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '');
@@ -65,6 +65,7 @@ const bare = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '')
           <li>
             <h3>
               <a href={absolute(pathFor(project.id, locale))}>{project.title}</a>
+              {project.kind === 'concept' && ` (${cv.conceptNote})`}
             </h3>
             <p>{project.summary}</p>
             <p class="cv-url">{bare(absolute(pathFor(project.id, locale)))}</p>
@@ -286,7 +287,7 @@ const bare = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '')
     }
 
     .cv {
-      gap: 5mm;
+      gap: 4mm;
       max-width: none;
       padding: 0;
       font-size: 9.6pt;
@@ -297,7 +298,7 @@ const bare = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '')
       grid-template-columns: 1fr auto;
       gap: 6mm;
       align-items: end;
-      padding-bottom: 4mm;
+      padding-bottom: 3mm;
       border-color: #c9ccd3;
     }
 
@@ -354,7 +355,7 @@ const bare = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '')
     }
 
     .cv-points {
-      gap: 0.8mm;
+      gap: 0.5mm;
       margin-top: 1.5mm;
     }
 
@@ -363,8 +364,8 @@ const bare = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '')
     }
 
     .cv-projects {
-      gap: 2.2mm;
-      margin-top: 2mm;
+      gap: 1.4mm;
+      margin-top: 1.5mm;
     }
 
     .cv-columns {
@@ -373,7 +374,7 @@ const bare = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '')
     }
 
     .cv-gap {
-      margin-top: 4mm;
+      margin-top: 3mm;
     }
 
     .cv-skills {

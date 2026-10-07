@@ -124,6 +124,8 @@ export interface CvContent {
   };
   projectsHeading: string;
   projectsNote: string;
+  /** Konsept projenin adının yanına yazılan not */
+  conceptNote: string;
   educationHeading: string;
   education: { degree: string; school: string; year: string };
   skillsHeading: string;
