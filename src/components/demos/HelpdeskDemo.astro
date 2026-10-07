@@ -1,0 +1,469 @@
+---
+// Ofis IT destek talepleri demosu (konsept çalışma). Sunucuda başlangıç talepleri eylem düğmesi olmadan
+// çizilir; betik yüklenince pano etkileşimli hale gelir. Veri yalnızca tarayıcıda durur.
+import { materializeSeed } from '../../demos/helpdesk/seed';
+import { HELPDESK_STRINGS } from '../../demos/helpdesk/strings';
+import { CATEGORIES, groupByStatus, PRIORITIES, STATUSES } from '../../demos/helpdesk/tickets';
+import { ageMinutes, formatDuration, isOverdue, summarize } from '../../demos/helpdesk/timing';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = HELPDESK_STRINGS[locale];
+// Derleme anındaki saat: betik çalışınca süreler ziyaretçinin saatine göre yeniden yazılır.
+const now = Date.now();
+const seed = materializeSeed(now, locale);
+const groups = groupByStatus(seed);
+const totals = summarize(seed, now);
+const duration = (minutes: number) => formatDuration(minutes, locale);
+---
+
+<div class="hd-demo" data-helpdesk-demo data-locale={locale}>
+  <div class="hd-intro">
+    <div>
+      <p class="hd-note">{s.fictionalNote}</p>
+      <p class="hd-note hd-note-warn" data-memory-note hidden>{s.memoryOnlyNote}</p>
+    </div>
+    <div class="hd-try">
+      <h3>{s.tryHeading}</h3>
+      <ol>
+        {s.trySteps.map((step) => <li>{step}</li>)}
+      </ol>
+    </div>
+  </div>
+
+  <dl class="hd-summary" data-summary aria-label={s.summaryLabel}>
+    <div><dt>{s.summaryOpen}</dt><dd>{totals.open}</dd></div>
+    <div><dt>{s.summaryUrgent}</dt><dd>{totals.urgentOpen}</dd></div>
+    <div><dt>{s.summaryOverdue}</dt><dd>{totals.overdue}</dd></div>
+    <div><dt>{s.summaryLongest}</dt><dd>{totals.longestOpenMinutes === null ? s.none : duration(totals.longestOpenMinutes)}</dd></div>
+  </dl>
+
+  <form class="hd-form" data-form novalidate>
+    <h3>{s.formHeading}</h3>
+    <div class="hd-fields">
+      <div class="hd-field hd-field-wide">
+        <label for={`hd-title-${locale}`}>{s.titleLabel}</label>
+        <input id={`hd-title-${locale}`} name="title" type="text" autocomplete="off" aria-describedby={`hd-title-hint-${locale} hd-title-error-${locale}`} />
+        <p class="hd-hint" id={`hd-title-hint-${locale}`}>{s.titleHint}</p>
+        <p class="hd-error" id={`hd-title-error-${locale}`} data-error="title" hidden></p>
+      </div>
+      <div class="hd-field">
+        <label for={`hd-category-${locale}`}>{s.categoryLabel}</label>
+        <select id={`hd-category-${locale}`} name="category" aria-describedby={`hd-category-error-${locale}`}>
+          {CATEGORIES.map((category) => <option value={category}>{s.categories[category]}</option>)}
+        </select>
+        <p class="hd-error" id={`hd-category-error-${locale}`} data-error="category" hidden></p>
+      </div>
+      <div class="hd-field">
+        <label for={`hd-priority-${locale}`}>{s.priorityLabel}</label>
+        <select id={`hd-priority-${locale}`} name="priority" aria-describedby={`hd-priority-error-${locale}`}>
+          {PRIORITIES.map((priority) => <option value={priority} selected={priority === 'normal'}>{s.priorities[priority]}</option>)}
+        </select>
+        <p class="hd-error" id={`hd-priority-error-${locale}`} data-error="priority" hidden></p>
+      </div>
+      <div class="hd-field">
+        <label for={`hd-requester-${locale}`}>{s.requesterLabel}</label>
+        <input id={`hd-requester-${locale}`} name="requester" type="text" autocomplete="off" aria-describedby={`hd-requester-error-${locale}`} />
+        <p class="hd-error" id={`hd-requester-error-${locale}`} data-error="requester" hidden></p>
+      </div>
+    </div>
+    <button type="submit" class="hd-submit">{s.submit}</button>
+    <p class="hd-status" data-status role="status" aria-live="polite"></p>
+  </form>
+
+  <section class="hd-board-wrap" aria-labelledby={`hd-board-${locale}`}>
+    <h3 id={`hd-board-${locale}`}>{s.boardHeading}</h3>
+    <div class="hd-board" data-board>
+      {
+        STATUSES.map((status) => (
+          <section class="hd-column" data-column={status} aria-labelledby={`hd-col-${status}-${locale}`}>
+            <h4 class="hd-column-head" id={`hd-col-${status}-${locale}`}>
+              {s.statuses[status]}
+              <span class="hd-count" data-count>{groups[status].length}</span>
+            </h4>
+            <ul class="hd-list" data-list>
+              {groups[status].map((ticket) => (
+                <li class="hd-card" data-ticket={ticket.id}>
+                  <h5 class="hd-title">{ticket.title}</h5>
+                  <p class="hd-meta">
+                    {s.categories[ticket.category]} · <span class="hd-priority" data-priority={ticket.priority}>{s.priorities[ticket.priority]}</span>
+                  </p>
+                  <p class="hd-requester">{s.requesterPrefix}: {ticket.requester}</p>
+                  <p class="hd-time">
+                    <span class="hd-age">{ticket.status === 'resolved' ? s.resolvedIn : s.openFor}: {duration(ageMinutes(ticket, now))}</span>
+                    {isOverdue(ticket, now) && <span class="hd-overdue">{s.overdue}</span>}
+                  </p>
+                  <p class="hd-requester">{s.assigneeLabel}: {ticket.assignee ?? s.unassigned}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+    <button type="button" class="hd-reset" data-reset>{s.reset}</button>
+  </section>
+</div>
+
+<script>
+  import { initHelpdeskBoard } from '../../demos/helpdesk/board';
+
+  document.querySelectorAll<HTMLElement>('[data-helpdesk-demo]').forEach((root) => {
+    try {
+      initHelpdeskBoard(root);
+    } catch (error) {
+      // Betik çalışmazsa sunucuda çizilen başlangıç panosu görünmeye devam eder.
+      console.error('[destek]', error);
+    }
+  });
+</script>
+
+<style is:global>
+  .hd-demo {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .hd-demo h3 {
+    font-size: 1.5rem;
+  }
+
+  .hd-intro {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .hd-note {
+    max-width: 52ch;
+    color: var(--color-ink-soft);
+  }
+
+  .hd-note-warn {
+    margin-top: 0.75rem;
+    color: var(--color-accent);
+  }
+
+  .hd-try ol {
+    display: grid;
+    gap: 0.5rem;
+    max-width: 58ch;
+    margin-top: 0.75rem;
+    padding-left: 1.375rem;
+    list-style: decimal;
+  }
+
+  .hd-try li::marker {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+  }
+
+  .hd-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 2rem;
+    padding-block: 1.5rem;
+    border-block: 1px solid var(--color-line);
+  }
+
+  .hd-summary dt {
+    color: var(--color-ink-soft);
+    font-size: 0.9375rem;
+  }
+
+  .hd-summary dd {
+    margin-top: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.625rem);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hd-form {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .hd-fields {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .hd-field {
+    display: grid;
+    gap: 0.375rem;
+    align-content: start;
+  }
+
+  .hd-field label,
+  .hd-assign span {
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  .hd-field input,
+  .hd-field select,
+  .hd-assign select {
+    width: 100%;
+    min-height: 2.875rem;
+    padding-inline: 0.875rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0;
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-size: 1rem;
+    caret-color: var(--color-accent);
+    color-scheme: dark;
+  }
+
+  .hd-field input:hover,
+  .hd-field select:hover,
+  .hd-assign select:hover:not(:disabled) {
+    border-color: var(--color-ink-soft);
+  }
+
+  .hd-field [aria-invalid='true'] {
+    border-color: var(--color-danger);
+  }
+
+  .hd-hint {
+    color: var(--color-ink-soft);
+    font-size: 0.875rem;
+  }
+
+  .hd-error {
+    color: var(--color-danger);
+    font-size: 0.9375rem;
+  }
+
+  .hd-submit,
+  .hd-reset,
+  .hd-action {
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hd-submit {
+    justify-self: start;
+    min-height: 3rem;
+    padding-inline: 1.5rem;
+    border-color: var(--color-accent);
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+
+  .hd-submit:hover {
+    border-color: var(--color-ink);
+    background-color: var(--color-ink);
+  }
+
+  .hd-reset {
+    justify-self: start;
+    margin-top: 2rem;
+  }
+
+  .hd-reset:hover,
+  .hd-action:hover {
+    border-color: var(--color-ink);
+    background-color: var(--color-ink);
+    color: var(--color-ground);
+  }
+
+  /* Her kutudaki ilk eylem, talebi ileri götüren eylemdir; vurgu rengi yalnızca ona verilir. */
+  .hd-action:first-child {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .hd-action:first-child:hover {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+
+  .hd-status {
+    min-height: 1.5rem;
+    color: var(--color-ink-soft);
+  }
+
+  .hd-board {
+    display: grid;
+    gap: 2.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .hd-column {
+    min-width: 0;
+  }
+
+  .hd-column-head {
+    display: flex;
+    gap: 0.625rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .hd-count {
+    color: var(--color-ink-soft);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hd-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .hd-card {
+    display: grid;
+    gap: 0.375rem;
+    padding: 1rem;
+    border: 1px solid var(--color-line);
+    background-color: var(--color-surface);
+  }
+
+  .hd-card:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .hd-title {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .hd-meta,
+  .hd-requester,
+  .hd-time {
+    color: var(--color-ink-soft);
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+  }
+
+  .hd-priority[data-priority='urgent'] {
+    color: var(--color-accent);
+    font-weight: 500;
+  }
+
+  .hd-time {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    align-items: baseline;
+  }
+
+  .hd-age {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Durum yalnızca renkle değil, metinle de belirtilir. */
+  .hd-overdue {
+    color: var(--color-danger);
+    font-weight: 500;
+  }
+
+  .hd-assign {
+    display: grid;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+  }
+
+  .hd-assign select:disabled {
+    color: var(--color-ink-soft);
+    cursor: not-allowed;
+  }
+
+  .hd-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .hd-empty {
+    padding-block: 1rem;
+    color: var(--color-ink-soft);
+    font-size: 0.9375rem;
+  }
+
+  .hd-card[data-touched] {
+    animation: hd-touch 1600ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes hd-touch {
+    from {
+      border-color: var(--color-accent);
+      background-color: oklch(0.74 0.13 62 / 0.22);
+    }
+
+    to {
+      border-color: var(--color-line);
+      background-color: var(--color-surface);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .hd-summary {
+      grid-template-columns: repeat(4, auto);
+      justify-content: start;
+      gap: 1.25rem 3rem;
+    }
+
+    .hd-fields {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .hd-field-wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hd-intro {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 4.5rem;
+    }
+
+    .hd-board {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.5rem;
+      align-items: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hd-card[data-touched] {
+      animation: none;
+      border-color: var(--color-accent);
+    }
+
+    .hd-submit,
+    .hd-reset,
+    .hd-action {
+      transition: none;
+    }
+  }
+</style>
