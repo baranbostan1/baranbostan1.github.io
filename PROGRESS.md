@@ -2,17 +2,17 @@
 
 Yeni session'da önce bu dosyayı ve `DECISIONS.md`'yi oku.
 
-## Durum (2026-10-07)
+## Durum (2026-10-08)
 
 **Aşama 1–5 (brainstorming, tasarım bağlamı, plan, prototip, geliştirme):** Tamamlandı.
-**Aşama 6 — Audit:** Tasarım dedektörü (bulgu yok) ve bağımsız kod incelemesi yapıldı; incelemenin kritik ve önemli bulguları düzeltildi. Impeccable'ın görsel bitiş incelemesi ve `DESIGN.md` yazımı yapılmadı.
+**Aşama 6 — Audit:** Tamamlandı. Tasarım dedektörü (bulgu yok), bağımsız kod incelemesi (kritik, önemli ve küçük bulgular düzeltildi) ve impeccable görsel bitiş incelemesi (8 bulgu + 2 yan etki düzeltildi; karar: yayına hazır) yapıldı. `DESIGN.md` yazıldı.
 **Aşama 7 — Doğrulama:** Tamamlandı; rapor aşağıda (Onay F alındı).
 **Aşama 8 — Deploy:** Yayında: https://baranbostan1.github.io (repo: `baranbostan1/baranbostan1.github.io`). **Onay G bekleniyor:** Baran canlı adresi VPN kapalıyken dener.
 
 ## Plan ilerlemesi
 
 - [x] Görev 1–14 — İskelet, prototip, üç demo, ana sayfa, CV, 404/SEO
-- [x] Görev 15 — Audit: dedektör + kod incelemesi + düzeltme turu (görsel bitiş incelemesi yapılmadı)
+- [x] Görev 15 — Audit: dedektör, kod incelemesi, görsel bitiş incelemesi, `DESIGN.md`
 - [x] Görev 16 — Doğrulama (Onay F)
 - [x] Görev 17 — Deploy: yayında; **Onay G bekleniyor**
 
@@ -22,7 +22,7 @@ Ayrıntılı defter (yerel): `.superpowers/sdd/plan/progress.md`.
 
 | Kontrol | Sonuç |
 |---|---|
-| Birim testleri | 234/234 |
+| Birim testleri | 263/263 |
 | Derleme | 17 sayfa; derleme sonrası denetim: ana sayfalarda 5 sahne de görüntüsüyle çıkıyor |
 | Lighthouse, mobil | Ana sayfa Performance 91 (TR) / 95 (EN); diğer sayfalar 96–99; Accessibility, Best Practices, SEO her sayfada 100 |
 | Lighthouse, masaüstü | On sayfanın tamamında dört kategori 100 |
@@ -45,13 +45,12 @@ Elle denenmeyenler: gerçek bir iPhone'da video oynatma ve lobi tam ekran yedeğ
 ## Sıradaki adımlar
 
 1. Onay G: Baran canlı adresi VPN kapalıyken, telefonda ve bilgisayarda dener; QR kodu okutur; LinkedIn paylaşım kartına bakar.
-2. İsteğe bağlı: ertelenen küçük bulgular; depo sırrı `ANONYMITY_WORDS` (CI'da anonimlik denetimi için).
+2. İsteğe bağlı: `DESIGN.md` içindeki önerilen adların ("Lamba Işığındaki Masa", renk adları) Baran'la gözden geçirilmesi.
 3. Yayından sonra, ayrı iş: dördüncü proje (öneri: arıza ve istek takibi; "konsept" etiketiyle).
 
 ## Baran'dan beklenenler
 
 - **Onay G:** canlı adres denemesi.
-- `public/media/hero-scrub.mp4` ve `public/media/hero-loop.mp4` dosyalarının silinmesi (eski adlandırmadan kaldı; repoya girmiyor ama yerel derlemeye kopyalanıyor).
 - Yayından sonra: gerçek bir telefonda ana sayfa, lobi "Tam ekran" ve QR kod denemesi.
 - İsteğe bağlı: kurgusal adlar için itiraz (restoran `src/demos/qr-menu/data.ts`, otel `src/demos/lobby/config.ts`); QR menü admin panelinin ekran görüntüsü.
 
@@ -64,7 +63,11 @@ Elle denenmeyenler: gerçek bir iPhone'da video oynatma ve lobi tam ekran yedeğ
 - `package-lock.json` Windows'ta üretildiği için Linux'ta eksik kalan iki paket (`@emnapi/core`, `@emnapi/runtime`) geliştirme bağımlılığı olarak eklendi; yoksa CI'da `npm ci` durur.
 - Derleme sonrası (`postbuild`) iki denetim çalışır: sahnelerin görüntüsüyle çıktığı ve yeni `dist/` içinde yasaklı kelime olmadığı.
 - Doğrulama betikleri varsayılan olarak dev sunucusuna (4321) bağlanır; derlenmiş siteyi denemek için `SHOTS_BASE_URL=http://localhost:4322`. Lighthouse: `node scripts/lighthouse.mjs [mobile|desktop]`.
-- Ertelenen küçük bulgular defterde (`minor (deferred)`): lobi panelinde "-0°", "0.500" tutarının kabul edilmesi, acenta filtresinin nadir bir durumda boş görünmesi, CSV indirmede URL'nin hemen iptali, dil değiştiricinin erişilebilir adı ve birkaç küçük şey daha.
+- Kod incelemesinin ertelenen küçük bulguları düzeltildi; tek kalan `.astro` dosyalarında tip denetimi.
+- Görsel bitiş incelemesinin kapsamı sınırlıydı: İngilizce sayfalar yalnızca dört mobil ana sayfa görüntüsünde görüldü; telefon tam ekranındaki lobi paneli verisi yüklenmiş hâlde görülmedi.
+- İnceleme için ekran görüntüsü `node scripts/capture-review.mjs <klasör>` ile alınır (sayfayı kaydırır, görsellerin yüklendiğini doğrular, ekran ekran çeker); tek parça tam sayfa görüntüsü yanıltır.
+- Lighthouse betiği Windows'ta pencere bırakabiliyordu (bir seferinde 51 pencere); artık tarayıcı görünmez çalışır ve her ölçümden sonra temizlik yapılır. Zorla kapatılan pencereler Alt+Tab'da boş kayıt bırakırsa Windows Gezgini yeniden başlatılır.
+- CI'da anonimlik denetimi depo sırrı `ANONYMITY_WORDS` ile çalışır; liste değişirse sır da güncellenir (`gh secret set ANONYMITY_WORDS < anonymity-words.local.txt`).
 - Fontlarda ok karakteri (→) yok; oklar SVG ile çizilir.
 - Higgsfield: 1000 krediden 54,75 harcandı (11 kare, 5 klip). Kayıt: `docs/media-prompts.md`.
 - QR Menü sayfasındaki QR kod yayın adresini gösterir; yayından önce telefonda açılmaz.

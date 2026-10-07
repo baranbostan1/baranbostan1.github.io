@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import './fonts.css';
 
-/* Tasarım belirteçleri. Başlangıç değerleri; görsel taslakta (plan Görev 4) kesinleşir. */
+/* Tasarım belirteçleri. Anlamları ve kullanım kuralları DESIGN.md dosyasında. */
 @theme {
   --color-ground: oklch(0.115 0.014 255);
   --color-surface: oklch(0.165 0.014 255);
@@ -17,8 +17,6 @@
 
   /* Etiketler için alt sınır 12.8px (0.8rem). */
   --text-label: 0.8rem;
-  --text-label--line-height: 1.4;
-  --text-label--letter-spacing: 0.08em;
 }
 
 @layer base {
@@ -133,11 +131,4 @@
     opacity: 1;
   }
 
-  .label {
-    font-family: var(--font-mono);
-    font-size: var(--text-label);
-    line-height: var(--text-label--line-height);
-    letter-spacing: var(--text-label--letter-spacing);
-    text-transform: uppercase;
-  }
 }

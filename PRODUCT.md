@@ -49,7 +49,7 @@ AI kullanımı saklanmaz: kod üretimi AI ile (Claude Code, ChatGPT Codex); soru
 - **Ücretsiz çalışma:** Hosting, font, API, kütüphane ücretsizdir. Tek istisna: görsel üretiminde Baran'ın mevcut Higgsfield kredisi; her üretimden önce maliyet söylenip onay alınır.
 - Lighthouse: ana sayfa Performance ≥ 90; diğer sayfalar ≥ 95; Accessibility, Best Practices, SEO her sayfada ≥ 95.
 - Kapsam dışı: YouTube pipeline projesi, profil fotoğrafı, LinkedIn, iletişim formu, açık tema, QR menü admin paneli demosu.
-- **Açık teyitler:** CV'de unvan, otelde çalışmanın sürüp sürmediği, şehir.
+- **CV teyitleri alındı (2026-10-07):** unvan "Resepsiyon Görevlisi", dönem Mayıs 2023 – Eylül 2026, yer Erdek/Balıkesir; askerlik yazılmaz.
 
 ## Brand Commitments
 

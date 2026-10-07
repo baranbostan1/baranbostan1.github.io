@@ -25,7 +25,7 @@
 ### Plan kararları (`docs/plan.md`)
 
 - **Metinler tipli TypeScript modüllerinde** (`src/content/*.{tr,en}.ts`). Sayfalar ve CV aynı kaynaktan beslenir; eksik çeviri derleme hatası verir.
-- **Sinematik katman üç modlu: `static` / `loop` / `scrub`.** Hareket azaltma ya da Save-Data → sabit kare; dar ekran ya da dokunmatik → döngülü klip; geniş ekran ve ince imleç → kaydırmaya bağlı video. Kitaplıklar yalnızca `scrub` modunda yüklenir.
+- **Sinematik katman üç modlu: `static` / `play` / `scrub`.** Hareket azaltma ya da Save-Data → sabit kare; dar ekran ya da dokunmatik → klip görünüme girince bir kez oynar; geniş ekran ve ince imleç → ek olarak hero videosu kaydırmaya bağlanır. Kitaplıklar yalnızca `scrub` modunda yüklenir. (İlk planda ikinci mod döngülü klipti; "Prototip" başlığındaki kararla değişti.)
 - **Kaydırmaya bağlı video önce sık anahtar kareli MP4 ile denenir.** Takılırsa WebP kare dizisi + canvas'a geçilir; karar prototipte verilir.
 - **Tutar ayrıştırma hem `1.250,50` hem `1250.5` biçimini kabul eder.** Belirsiz biçimler reddedilir; tüm hesap kuruş cinsinden tam sayıdır.
 - **Acenta adları trim ve Türkçe küçük harfle eşleştirilir.** Yazım farkı ayrı acenta oluşturmaz.
