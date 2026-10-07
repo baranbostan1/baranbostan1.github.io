@@ -1,0 +1,372 @@
+---
+// QR menü demosu: telefon çerçevesi içinde kurgusal bir restoranın menüsü.
+// Sunucuda tüm menü çizilir (JavaScript yokken de okunur); betik yüklenince filtreler çalışır.
+import { CATEGORIES, ITEMS, RESTAURANT_NAME } from '../../demos/qr-menu/data';
+import { QR_MENU_STRINGS } from '../../demos/qr-menu/strings';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+  /** true ise telefon çerçevesi ve rehber çizilmez; menü ekranı doldurur (telefonda açılan sürüm) */
+  full?: boolean;
+}
+
+const { locale, full = false } = Astro.props;
+const strings = QR_MENU_STRINGS[locale];
+const price = new Intl.NumberFormat(locale === 'tr' ? 'tr-TR' : 'en-US', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
+const sections = [...CATEGORIES]
+  .sort((a, b) => a.order - b.order)
+  .map((category) => ({ category, rows: ITEMS.filter((item) => item.categoryId === category.id) }));
+---
+
+<div class:list={['qr-demo', { 'qr-demo-full': full }]} data-qr-menu data-locale={locale}>
+  <div class="qr-phone">
+    <div class="qr-screen">
+      <header class="qr-head">
+        <p class="qr-note">{strings.fictionalNote}</p>
+        <h3 class="qr-name">{RESTAURANT_NAME}</h3>
+        <div class="qr-period" role="group" aria-label={strings.periodLabel}>
+          <button type="button" data-period="day" aria-pressed="false">{strings.day}</button>
+          <button type="button" data-period="evening" aria-pressed="false">{strings.evening}</button>
+        </div>
+        <label class="qr-search">
+          <span class="sr-only">{strings.searchLabel}</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+            <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+            <path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+          </svg>
+          <input type="search" data-menu-search placeholder={strings.searchPlaceholder} autocomplete="off" enterkeyhint="search" />
+        </label>
+        <div class="qr-chips" data-menu-chips data-lenis-prevent role="group" aria-label={strings.categoriesLabel}></div>
+      </header>
+      <div class="qr-list" data-menu-list data-lenis-prevent tabindex="0" role="region" aria-label={RESTAURANT_NAME}>
+        {
+          sections.map(({ category, rows }) => (
+            <section class="qr-section">
+              <h4 class="qr-section-title">{category.name[locale]}</h4>
+              <ul class="qr-rows">
+                {rows.map((item) => (
+                  <li class="qr-item">
+                    <div class="qr-item-text">
+                      <p class="qr-item-name">{item.name[locale]}</p>
+                      <p class="qr-item-desc">{item.description[locale]}</p>
+                    </div>
+                    <p class="qr-item-price">{price.format(item.priceKurus / 100)}</p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </div>
+      <p class="sr-only" data-menu-status role="status" aria-live="polite"></p>
+    </div>
+  </div>
+
+  {
+    !full && (
+      <div class="qr-guide">
+        <h3>{strings.tryHeading}</h3>
+        <ol>
+          {strings.tryItems.map((text) => (
+            <li>{text}</li>
+          ))}
+        </ol>
+        <p class="qr-admin">{strings.adminNote}</p>
+        <slot />
+      </div>
+    )
+  }
+</div>
+
+<script>
+  import { initQrMenu } from '../../demos/qr-menu/menu';
+
+  document.querySelectorAll<HTMLElement>('[data-qr-menu]').forEach((root) => {
+    try {
+      initQrMenu(root);
+    } catch (error) {
+      // Betik çalışmazsa sunucuda çizilen tam menü görünmeye devam eder.
+      console.error('[qr-menü]', error);
+    }
+  });
+</script>
+
+<style is:global>
+  .qr-demo {
+    display: grid;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .qr-phone {
+    width: min(100%, 23.5rem);
+    padding: 0.625rem;
+    border: 1px solid var(--color-line);
+    border-radius: 2.25rem;
+    background-color: oklch(0.1 0.006 60);
+    box-shadow: 0 2rem 4rem -1.5rem oklch(0 0 0 / 0.7);
+  }
+
+  .qr-screen {
+    display: flex;
+    flex-direction: column;
+    height: min(42rem, 78svh);
+    overflow: hidden;
+    border-radius: 1.75rem;
+    background-color: var(--color-surface);
+  }
+
+  /* Tam ekran sürüm: çerçeve yok, menü üst şeridin altında kalan ekranı doldurur. */
+  .qr-demo-full {
+    display: block;
+    height: calc(100svh - 3.3125rem);
+  }
+
+  .qr-demo-full .qr-phone {
+    width: 100%;
+    max-width: 34rem;
+    height: 100%;
+    margin-inline: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .qr-demo-full .qr-screen {
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .qr-head {
+    display: grid;
+    gap: 0.875rem;
+    padding: 1.25rem 1.125rem 0.875rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .qr-note {
+    color: var(--color-ink-soft);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+
+  .qr-name {
+    font-size: 1.75rem;
+  }
+
+  .qr-period {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0.1875rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+  }
+
+  .qr-period button,
+  .qr-chip {
+    min-height: 2.75rem;
+    border-radius: 999px;
+    color: var(--color-ink-soft);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .qr-period button:hover,
+  .qr-chip:hover {
+    color: var(--color-ink);
+  }
+
+  .qr-period button[aria-pressed='true'],
+  .qr-chip[aria-pressed='true'] {
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+
+  .qr-search {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.75rem;
+    padding-inline: 0.875rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    color: var(--color-ink-soft);
+  }
+
+  .qr-search:focus-within {
+    border-color: var(--color-accent);
+  }
+
+  .qr-search input {
+    flex: 1;
+    min-width: 0;
+    height: 2.75rem;
+    background: none;
+    color: var(--color-ink);
+    font-size: 1rem;
+    caret-color: var(--color-accent);
+  }
+
+  .qr-search input::placeholder {
+    color: var(--color-ink-soft);
+    opacity: 1;
+  }
+
+  .qr-search input:focus-visible {
+    outline: none;
+  }
+
+  .qr-chips {
+    display: flex;
+    gap: 0.375rem;
+    margin-inline: -1.125rem;
+    padding-inline: 1.125rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  /* JavaScript yokken çipler boştur; boşluk bırakmasın. */
+  .qr-chips:empty {
+    display: none;
+  }
+
+  .qr-chip {
+    flex: none;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-line);
+    white-space: nowrap;
+  }
+
+  .qr-chip[aria-pressed='true'] {
+    border-color: var(--color-accent);
+  }
+
+  .qr-list {
+    flex: 1;
+    padding: 0.5rem 1.125rem 1.5rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line) transparent;
+  }
+
+  .qr-section-title {
+    padding-block: 1.25rem 0.5rem;
+    color: var(--color-accent);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .qr-item {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-block: 0.75rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .qr-item-name {
+    font-weight: 500;
+  }
+
+  .qr-item-desc {
+    margin-top: 0.125rem;
+    color: var(--color-ink-soft);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  .qr-item-price {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .qr-empty {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: start;
+    padding-block: 2.5rem;
+  }
+
+  .qr-empty-title {
+    font-weight: 600;
+  }
+
+  .qr-empty-hint {
+    color: var(--color-ink-soft);
+    font-size: 0.9375rem;
+  }
+
+  .qr-clear {
+    min-height: 2.75rem;
+    margin-top: 0.5rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .qr-clear:hover {
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+
+  .qr-guide {
+    max-width: 34rem;
+  }
+
+  .qr-guide h3 {
+    font-size: 1.5rem;
+  }
+
+  .qr-guide ol {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    padding-left: 1.5rem;
+    list-style: decimal;
+  }
+
+  .qr-guide li::marker {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  .qr-admin {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-line);
+    color: var(--color-ink-soft);
+  }
+
+  @media (min-width: 900px) {
+    .qr-demo {
+      grid-template-columns: 23.5rem minmax(0, 1fr);
+      gap: 5rem;
+    }
+
+    .qr-guide {
+      padding-top: 2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .qr-period button,
+    .qr-chip {
+      transition: none;
+    }
+  }
+</style>

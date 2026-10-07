@@ -1,0 +1,58 @@
+---
+// GitHub Pages tek bir 404 sayfası sunar; bu yüzden sayfa iki dilde yazılır.
+import ArrowLink from '../components/ArrowLink.astro';
+import { pathFor } from '../i18n/routes';
+import Base from '../layouts/Base.astro';
+---
+
+<Base page="notFound" locale="tr" title="Sayfa bulunamadı — Baran Berkay Bostan" description="Aradığınız sayfa bulunamadı.">
+  <section class="not-found">
+    <div>
+      <h1>Sayfa bulunamadı</h1>
+      <p>Aradığınız adres taşınmış ya da hiç var olmamış olabilir.</p>
+      <ArrowLink href={pathFor('home', 'tr')}>Ana sayfaya dön</ArrowLink>
+    </div>
+    <div lang="en">
+      <h2>Page not found</h2>
+      <p>The address you were looking for may have moved, or never existed.</p>
+      <ArrowLink href={pathFor('home', 'en')}>Back to the home page</ArrowLink>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .not-found {
+    display: grid;
+    gap: 4rem;
+    align-content: center;
+    max-width: 80rem;
+    min-height: 80svh;
+    margin-inline: auto;
+    padding: 8rem 1.25rem 5rem;
+  }
+
+  .not-found > div {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+
+  h1,
+  h2 {
+    font-size: clamp(2.375rem, 1.6rem + 4vw, 4.5rem);
+    font-variation-settings: 'opsz' 144;
+  }
+
+  p {
+    max-width: 44ch;
+    font-size: 1.125rem;
+    color: var(--color-ink-soft);
+  }
+
+  @media (min-width: 900px) {
+    .not-found {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding-inline: 2rem;
+    }
+  }
+</style>

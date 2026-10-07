@@ -1,0 +1,123 @@
+---
+// Lobi sahnesindeki canlı şerit: gerçek saat ve üç döviz kuru. Kur isteği şerit görünüme girince bir kez yapılır.
+// Veri gelene kadar ve gelmezse "—" görünür; ekrana hiçbir zaman NaN yazılmaz.
+import { getHome } from '../../content';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { live } = getHome(locale);
+const CURRENCIES = ['usd', 'eur', 'gbp'] as const;
+---
+
+<div class="live-strip" data-live-strip data-locale={locale} data-unavailable={live.ratesUnavailable}>
+  <p>
+    <span class="live-label">{live.clockLabel}</span>
+    <span class="live-value" data-live-clock>--:--</span>
+  </p>
+  <p>
+    <span class="live-label" data-live-rates-label>{live.ratesLabel}</span>
+    <span class="live-rates">
+      {
+        CURRENCIES.map((code) => (
+          <span>
+            <abbr>{code.toUpperCase()}</abbr> <span class="live-value" data-live-rate={code}>—</span>
+          </span>
+        ))
+      }
+    </span>
+  </p>
+</div>
+
+<script>
+  import { fetchJson } from '../../demos/lobby/fetch-json';
+  import { parseRates, RATE_URLS, type Rates } from '../../demos/lobby/rates';
+
+  const TIME_ZONE = 'Europe/Istanbul';
+  const CLOCK_TICK_MS = 1000;
+  const FETCH_OPTIONS = { timeoutMs: 8000, retries: 1 };
+
+  function initLiveStrip(root: HTMLElement): void {
+    const numberLocale = root.dataset.locale === 'en' ? 'en-GB' : 'tr-TR';
+    const timeFormat = new Intl.DateTimeFormat(numberLocale, { timeZone: TIME_ZONE, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+    const rateFormat = new Intl.NumberFormat(numberLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const clock = root.querySelector<HTMLElement>('[data-live-clock]');
+    const label = root.querySelector<HTMLElement>('[data-live-rates-label]');
+    if (!clock || !label) return;
+
+    const tick = (): void => {
+      clock.textContent = timeFormat.format(new Date());
+    };
+    tick();
+    window.setInterval(tick, CLOCK_TICK_MS);
+
+    const showRates = (rates: Rates): void => {
+      (Object.keys(rates) as Array<keyof Rates>).forEach((code) => {
+        const node = root.querySelector<HTMLElement>(`[data-live-rate="${code}"]`);
+        if (node) node.textContent = rateFormat.format(rates[code]);
+      });
+    };
+
+    const loadRates = async (): Promise<void> => {
+      try {
+        const rates = parseRates(await fetchJson(RATE_URLS, FETCH_OPTIONS));
+        if (rates === null) throw new Error('beklenmeyen yanıt biçimi');
+        showRates(rates);
+      } catch (error) {
+        console.warn('[canlı şerit] kur alınamadı:', error);
+        label.textContent = root.dataset.unavailable ?? label.textContent;
+      }
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      observer.disconnect();
+      void loadRates();
+    });
+    observer.observe(root);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-live-strip]').forEach(initLiveStrip);
+</script>
+
+<style>
+  .live-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2.5rem;
+    width: 100%;
+    padding-block: 1rem;
+    border-block: 1px solid var(--color-line);
+  }
+
+  .live-strip p {
+    display: grid;
+    gap: 0.125rem;
+  }
+
+  .live-label {
+    color: var(--color-ink-soft);
+    font-size: 0.875rem;
+  }
+
+  .live-value {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .live-rates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+  }
+
+  abbr {
+    color: var(--color-ink-soft);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+</style>

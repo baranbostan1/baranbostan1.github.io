@@ -1,0 +1,55 @@
+---
+// Birincil bağlantı: metin + çizilmiş ok. (Ok karakteri fontlarda yok; SVG kullanılır.)
+interface Props {
+  href: string;
+  label?: string;
+}
+
+const { href, label } = Astro.props;
+---
+
+<a class="arrow-link" href={href} aria-label={label} data-magnetic>
+  <span><slot /></span>
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+    <path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"></path>
+  </svg>
+</a>
+
+<style>
+  .arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3rem;
+    padding: 0 1.25rem;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      background-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .arrow-link svg {
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .arrow-link:hover,
+  .arrow-link:focus-visible {
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+
+  .arrow-link:hover svg,
+  .arrow-link:focus-visible svg {
+    transform: translateX(4px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arrow-link,
+    .arrow-link svg {
+      transition: none;
+    }
+  }
+</style>

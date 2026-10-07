@@ -1,0 +1,25 @@
+import type { UiStrings } from '../content/types';
+
+export const ui: UiStrings = {
+  siteName: 'Baran Berkay Bostan',
+  skipToContent: 'Skip to content',
+  switchLanguageLabel: 'View this page in Turkish',
+  switchLanguageName: 'Türkçe',
+  footerNote: 'This site was built with AI-assisted development.',
+  emailLabel: 'Email',
+  githubLabel: 'GitHub',
+  problemLabel: 'Problem',
+  solutionLabel: 'Solution',
+  resultLabel: 'Outcome',
+  technicalLabel: 'Technical',
+  demoLabel: 'Demo',
+  projectsHeading: 'Projects',
+  backToHome: 'All projects',
+  mediaPending: 'Footage in production',
+  openFullscreenDemo: 'Open the demo full screen',
+  backToProject: 'Back to the project page',
+  scanHeading: 'Try it on your phone',
+  scanText: 'Scan the code with your camera; the menu opens on your phone, as it would at a restaurant table.',
+  fullscreenDemoTitle: 'Demo',
+  ogImageAlt: 'A lit screen on a desk at night, with the name Baran Berkay Bostan and the line “I turn the everyday problems of a business into working tools.”',
+};

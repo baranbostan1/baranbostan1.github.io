@@ -1,0 +1,111 @@
+---
+// Bir sahnenin görüntüsü: sabit kare ve üstüne sonradan yüklenen video.
+// JavaScript yokken ya da hareket kapalıyken dönüşümün bittiği son kare görünür.
+// Video oynatılacaksa önce ilk kare gösterilir; böylece video başlarken sıçrama olmaz.
+// Medya dosyası henüz yoksa koyu bir yer tutucu çıkar.
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import type { Locale } from '../i18n/locales';
+import { getUi } from '../i18n/ui';
+
+export type SceneName = 'hero' | 'qr-menu' | 'lobby' | 'agency' | 'closing';
+
+interface Props {
+  name: SceneName;
+  locale: Locale;
+  alt: string;
+  eager?: boolean;
+  class?: string;
+}
+
+const { name, locale, alt, eager = false, class: className = '' } = Astro.props;
+const ui = getUi(locale);
+// Yol proje kökünden çözülür: `astro build` sırasında import.meta.url kaynak klasörünü göstermez
+// (bu yüzden bir ara derlemede bütün sahneler yer tutucuyla çıkmıştı; scripts/check-build.mjs bunu denetler).
+const hasMedia = existsSync(path.join(process.cwd(), 'public', 'media', `${name}-poster.webp`));
+const base = `/media/${name}`;
+const SMALL_SCREEN = '(max-width: 640px)';
+---
+
+<div class:list={['scene-media', className]} data-scene={name}>
+  {
+    hasMedia ? (
+      <>
+        <picture class="scene-end">
+          <source media={SMALL_SCREEN} srcset={`${base}-poster-sm.webp`} />
+          <img
+            src={`${base}-poster.webp`}
+            alt={alt}
+            width="1920"
+            height="1080"
+            loading={eager ? 'eager' : 'lazy'}
+            fetchpriority={eager ? 'high' : 'auto'}
+            decoding="async"
+          />
+        </picture>
+        <picture class="scene-start">
+          <source media={SMALL_SCREEN} srcset={`${base}-start-sm.webp`} />
+          <img src={`${base}-start.webp`} alt="" width="1920" height="1080" loading="lazy" decoding="async" />
+        </picture>
+        <video muted playsinline preload="none" aria-hidden="true" tabindex="-1" data-src-lg={`${base}-lg.mp4`} data-src-sm={`${base}-sm.mp4`} />
+      </>
+    ) : (
+      <div class="scene-placeholder" role="img" aria-label={alt}>
+        <span>{ui.mediaPending}</span>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .scene-media {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-surface);
+  }
+
+  .scene-media :global(img),
+  .scene-media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* İlk kare yalnızca video oynatılacak modlarda görünür (html[data-cine] sayfa çizilmeden önce atanır). */
+  .scene-start {
+    display: none;
+  }
+
+  :global(html[data-cine='play']) .scene-start,
+  :global(html[data-cine='scrub']) .scene-start {
+    display: block;
+  }
+
+  /* Video oynatılamazsa (hata, engellenen otomatik oynatma) son kareye dönülür. */
+  .scene-media[data-failed] .scene-start {
+    display: none;
+  }
+
+  .scene-media video {
+    opacity: 0;
+  }
+
+  .scene-media video[data-ready] {
+    opacity: 1;
+  }
+
+  .scene-placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: end start;
+    padding: 1rem 1.25rem;
+    background:
+      radial-gradient(120% 90% at 72% 38%, oklch(0.32 0.05 62 / 0.55), transparent 60%),
+      linear-gradient(160deg, oklch(0.2 0.012 60), oklch(0.12 0.006 60));
+    color: var(--color-ink-soft);
+    font-size: 0.875rem;
+  }
+</style>

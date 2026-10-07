@@ -1,0 +1,53 @@
+# Siteyi GitHub Pages'e yayınlar: main dalına her push'ta testler çalışır, site derlenir ve yayına alınır.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Aynı anda tek yayın; süren bir yayın yarıda kesilmez.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      # İsteğe bağlı depo sırrı: tanımlıysa anonimlik denetimi burada da çalışır.
+      # Tanımlı değilse denetim uyarı verip geçer; asıl denetim push'tan önce yerelde yapılır.
+      ANONYMITY_WORDS: ${{ secrets.ANONYMITY_WORDS }}
+    steps:
+      - uses: actions/checkout@v7
+      # Bağımlılıkları kurar, `npm run build` çalıştırır (derleme öncesi ve sonrası denetimlerle) ve çıktıyı yükler.
+      - uses: withastro/action@v6
+        with:
+          node-version: 24
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

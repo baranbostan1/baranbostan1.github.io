@@ -1,0 +1,11 @@
+---
+import CvDocument from '../../components/CvDocument.astro';
+import { getCv } from '../../content';
+import Base from '../../layouts/Base.astro';
+
+const cv = getCv('en');
+---
+
+<Base page="cv" locale="en" title={cv.metaTitle} description={cv.metaDescription}>
+  <CvDocument locale="en" />
+</Base>

@@ -1,0 +1,28 @@
+---
+import { CONTACT } from '../content/types';
+import type { Locale } from '../i18n/locales';
+import { getUi } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const ui = getUi(locale);
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line">
+  <div class="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-8 text-ink-soft sm:flex-row sm:items-center sm:justify-between sm:px-8">
+    <p class="text-sm">© {year} {CONTACT.name}</p>
+    <p class="text-sm">{ui.footerNote}</p>
+    <ul class="flex gap-6 text-sm font-medium">
+      <li>
+        <a class="inline-flex min-h-11 items-center text-ink hover:text-accent" href={`mailto:${CONTACT.email}`}>{ui.emailLabel}</a>
+      </li>
+      <li>
+        <a class="inline-flex min-h-11 items-center text-ink hover:text-accent" href={CONTACT.githubUrl} rel="me noopener" lang="en">{ui.githubLabel}</a>
+      </li>
+    </ul>
+  </div>
+</footer>

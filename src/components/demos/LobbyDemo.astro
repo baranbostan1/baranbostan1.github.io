@@ -1,0 +1,520 @@
+---
+// Lobi bilgi ekranı demosu: TV çerçevesi içinde 1920×1080 bir sahne, çerçeveye orantılı sığdırılır.
+// Sahne sabit piksel ölçüleriyle çizilir (gerçek panel de böyledir); ölçekleme tek bir transform ile yapılır.
+import { ANNOUNCEMENTS, HOTEL_NAME, HOURS, LOBBY_STRINGS, ROOMS } from '../../demos/lobby/config';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = LOBBY_STRINGS[locale];
+const price = new Intl.NumberFormat(locale === 'tr' ? 'tr-TR' : 'en-GB', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
+const CURRENCIES = [
+  { code: 'usd', label: 'USD' },
+  { code: 'eur', label: 'EUR' },
+  { code: 'gbp', label: 'GBP' },
+] as const;
+---
+
+<div class="lb-demo" data-lobby-demo data-locale={locale}>
+  <p class="lb-note">{s.fictionalNote}</p>
+
+  <div class="lb-tv">
+    <div class="lb-frame" data-frame>
+      <button type="button" class="lb-close" data-expand-close hidden>{s.closeFullscreen}</button>
+      <div class="lb-stage" data-stage>
+        <header class="lb-top">
+          <div>
+            <p class="lb-hotel">{HOTEL_NAME}</p>
+            <p class="lb-date" data-date></p>
+          </div>
+          <p class="lb-clock"><span data-clock>--:--</span><span class="lb-seconds" data-seconds></span></p>
+        </header>
+
+        <div class="lb-grid">
+          <section class="lb-panel lb-rooms">
+            <h3>{s.roomsHeading}</h3>
+            <p class="lb-sub"><span data-rate-mode>{s.weekdayRate}</span> · {s.roomsNote}</p>
+            <ul>
+              {
+                ROOMS.map((room) => (
+                  <li>
+                    <span>{room.name[locale]}</span>
+                    <span class="lb-price" data-price>
+                      {price.format(room.weekdayLira)}
+                    </span>
+                  </li>
+                ))
+              }
+            </ul>
+          </section>
+
+          <section class="lb-panel lb-hours">
+            <h3>{s.hoursHeading}</h3>
+            <dl>
+              {
+                HOURS.map((row) => (
+                  <div>
+                    <dt>{row.label[locale]}</dt>
+                    <dd>{row.value[locale]}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </section>
+
+          <div class="lb-side">
+            <section class="lb-panel lb-weather">
+              <h3>
+                {s.weatherHeading} · {s.weatherPlace}
+              </h3>
+              <p class="lb-temp"><span data-temperature>—</span><span class="lb-kind" data-weather-kind></span></p>
+              <p class="lb-status" data-weather-status>{s.loading}</p>
+            </section>
+            <section class="lb-panel lb-rates">
+              <h3>{s.ratesHeading}</h3>
+              <dl>
+                {
+                  CURRENCIES.map((currency) => (
+                    <div>
+                      <dt>{currency.label}</dt>
+                      <dd data-rate={currency.code}>—</dd>
+                    </div>
+                  ))
+                }
+              </dl>
+              <p class="lb-status" data-rates-status>{s.loading}</p>
+            </section>
+          </div>
+        </div>
+
+        <div class="lb-ticker" data-ticker role="region" aria-label={s.announcementsLabel}>
+          <ul class="lb-ticker-track">
+            {ANNOUNCEMENTS.map((item) => <li>{item[locale]}</li>)}
+            {/* Kesintisiz kayma için içerik ikinci kez yazılır; ekran okuyucudan gizlidir. */}
+            {ANNOUNCEMENTS.map((item) => <li aria-hidden="true">{item[locale]}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lb-controls" role="group" aria-label={s.controlsLabel}>
+    <div class="lb-switch" role="group" aria-label={s.rateModeLabel}>
+      <button type="button" data-mode="weekday" aria-pressed="true">{s.weekday}</button>
+      <button type="button" data-mode="weekend" aria-pressed="false">{s.weekend}</button>
+    </div>
+    <button type="button" class="lb-button" data-offline aria-pressed="false">{s.cutConnection}</button>
+    <button type="button" class="lb-button" data-ticker-toggle aria-pressed="false">{s.pauseTicker}</button>
+    <button type="button" class="lb-button lb-button-accent" data-fullscreen>{s.fullscreen}</button>
+  </div>
+  <p class="lb-hint">{s.smallScreenHint}</p>
+
+  <div class="lb-guide">
+    <h3>{s.tryHeading}</h3>
+    <ol>
+      {s.tryItems.map((text) => <li>{text}</li>)}
+    </ol>
+  </div>
+
+  <slot />
+</div>
+
+<script>
+  import { initLobbyPanel } from '../../demos/lobby/panel';
+
+  document.querySelectorAll<HTMLElement>('[data-lobby-demo]').forEach((root) => {
+    try {
+      initLobbyPanel(root);
+    } catch (error) {
+      console.error('[lobi]', error);
+    }
+  });
+</script>
+
+<style is:global>
+  .lb-demo {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .lb-note,
+  .lb-hint {
+    max-width: 62ch;
+    color: var(--color-ink-soft);
+  }
+
+  .lb-hint {
+    font-size: 0.9375rem;
+  }
+
+  /* TV gövdesi */
+  .lb-tv {
+    padding: clamp(0.375rem, 1vw, 0.875rem);
+    border: 1px solid var(--color-line);
+    border-radius: 0.5rem;
+    background-color: oklch(0.09 0.004 60);
+    box-shadow: 0 2.5rem 5rem -2rem oklch(0 0 0 / 0.8);
+  }
+
+  .lb-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: oklch(0.13 0.012 250);
+  }
+
+  /* Tam ekranda çerçeve ekranı doldurur; sahneyi betik ölçekleyip ortalar. */
+  .lb-frame:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    aspect-ratio: auto;
+    background-color: #000;
+  }
+
+  /* Tam ekran API'si yokken (iPhone): çerçeve sayfanın üstünde ekranı kaplar. */
+  .lb-frame[data-expanded] {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    width: 100vw;
+    height: 100dvh;
+    aspect-ratio: auto;
+    background-color: #000;
+  }
+
+  /* Dik tutulan ekranda çerçeve yan çevrilir; panel yatay TV oranında, okunur boyutta görünür. */
+  @media (orientation: portrait) {
+    .lb-frame[data-expanded] {
+      left: 100vw;
+      width: 100dvh;
+      height: 100vw;
+      transform: rotate(90deg);
+      transform-origin: top left;
+    }
+  }
+
+  html[data-lobby-expanded] {
+    overflow: hidden;
+  }
+
+  /* Alt köşede durur: orada yalnızca kayan duyuru bandı vardır, sabit bir bilgi örtülmez. */
+  .lb-close {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    z-index: 2;
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-ink);
+    background-color: oklch(0.115 0.014 255 / 0.9);
+    color: var(--color-ink);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* Sahne: her ölçü 1920×1080 piksel üzerinden verilir. */
+  .lb-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    width: 1920px;
+    height: 1080px;
+    padding: 64px 72px 0;
+    background:
+      radial-gradient(90% 70% at 85% 0%, oklch(0.3 0.06 62 / 0.35), transparent 60%),
+      oklch(0.13 0.012 250);
+    color: var(--color-ink);
+    transform-origin: 0 0;
+  }
+
+  .lb-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 40px;
+    border-bottom: 2px solid oklch(0.94 0.015 80 / 0.16);
+  }
+
+  .lb-hotel {
+    font-family: var(--font-display);
+    font-size: 76px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+
+  .lb-date {
+    margin-top: 18px;
+    color: var(--color-ink-soft);
+    font-size: 32px;
+  }
+
+  .lb-clock {
+    font-family: var(--font-mono);
+    font-size: 132px;
+    font-variant-numeric: tabular-nums;
+    line-height: 0.9;
+  }
+
+  .lb-seconds {
+    margin-left: 14px;
+    color: var(--color-accent);
+    font-size: 52px;
+  }
+
+  .lb-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.9fr 0.85fr;
+    gap: 56px;
+    padding-block: 48px;
+  }
+
+  .lb-panel h3 {
+    color: var(--color-accent);
+    font-family: var(--font-sans);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .lb-sub {
+    margin-top: 10px;
+    color: var(--color-ink-soft);
+    font-size: 26px;
+  }
+
+  .lb-rooms ul {
+    margin-top: 28px;
+  }
+
+  .lb-rooms li,
+  .lb-hours dl > div,
+  .lb-rates dl > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding-block: 24px;
+    border-bottom: 1px solid oklch(0.94 0.015 80 / 0.14);
+    font-size: 38px;
+  }
+
+  .lb-price,
+  .lb-hours dd,
+  .lb-rates dd {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .lb-price {
+    font-size: 46px;
+  }
+
+  .lb-hours dl,
+  .lb-rates dl {
+    margin-top: 28px;
+  }
+
+  .lb-hours dl > div {
+    font-size: 34px;
+  }
+
+  .lb-side {
+    display: grid;
+    gap: 44px;
+    align-content: start;
+  }
+
+  .lb-temp {
+    display: flex;
+    gap: 24px;
+    align-items: baseline;
+    margin-top: 16px;
+    font-family: var(--font-mono);
+    font-size: 112px;
+    line-height: 1;
+  }
+
+  .lb-kind {
+    font-family: var(--font-sans);
+    font-size: 38px;
+  }
+
+  .lb-rates dl > div {
+    padding-block: 16px;
+    font-size: 36px;
+  }
+
+  .lb-rates dt {
+    color: var(--color-ink-soft);
+    font-family: var(--font-mono);
+  }
+
+  .lb-status {
+    margin-top: 16px;
+    color: var(--color-ink-soft);
+    font-size: 24px;
+  }
+
+  .lb-status[data-stale] {
+    color: var(--color-accent);
+  }
+
+  .lb-ticker {
+    margin-inline: -72px;
+    overflow: hidden;
+    border-top: 2px solid oklch(0.94 0.015 80 / 0.16);
+    background-color: oklch(0.1 0.01 250);
+  }
+
+  .lb-ticker-track {
+    display: flex;
+    width: max-content;
+    animation: lb-ticker 48s linear infinite;
+  }
+
+  .lb-ticker li {
+    padding: 26px 56px;
+    font-size: 34px;
+    white-space: nowrap;
+  }
+
+  .lb-ticker li::before {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 56px;
+    background-color: var(--color-accent);
+    vertical-align: middle;
+  }
+
+  .lb-ticker[data-paused] .lb-ticker-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes lb-ticker {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Denetimler */
+  .lb-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .lb-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0.1875rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+  }
+
+  .lb-switch button {
+    min-height: 2.75rem;
+    padding-inline: 1.25rem;
+    border-radius: 999px;
+    color: var(--color-ink-soft);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .lb-switch button[aria-pressed='true'] {
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+
+  .lb-button {
+    min-height: 3rem;
+    padding-inline: 1.25rem;
+    border: 1px solid var(--color-line);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .lb-button:hover {
+    border-color: var(--color-ink);
+  }
+
+  .lb-button[aria-pressed='true'] {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .lb-button-accent {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .lb-button-accent:hover {
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+
+  .lb-guide {
+    max-width: 44rem;
+    margin-top: 1.5rem;
+  }
+
+  .lb-guide h3 {
+    font-size: 1.5rem;
+  }
+
+  .lb-guide ol {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    padding-left: 1.5rem;
+    list-style: decimal;
+  }
+
+  .lb-guide li::marker {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  @media (min-width: 900px) {
+    .lb-hint {
+      display: none;
+    }
+  }
+
+  /* Hareket azaltma: bant kaymaz; duyurular sığdığı kadar yan yana durur, kopya gizlenir. */
+  @media (prefers-reduced-motion: reduce) {
+    .lb-ticker-track {
+      flex-wrap: wrap;
+      width: auto;
+      animation: none;
+    }
+
+    .lb-ticker li {
+      padding-block: 10px;
+      font-size: 26px;
+      white-space: normal;
+    }
+
+    .lb-ticker li[aria-hidden='true'] {
+      display: none;
+    }
+
+    .lb-button {
+      transition: none;
+    }
+  }
+</style>

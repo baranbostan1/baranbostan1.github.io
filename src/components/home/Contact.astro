@@ -1,0 +1,166 @@
+---
+// Kapanış: üç ekranın yan yana çalıştığı sahne ve iletişim bilgileri. Form yok; e-posta ve GitHub.
+import { getHome } from '../../content';
+import { CONTACT } from '../../content/types';
+import type { Locale } from '../../i18n/locales';
+import { pathFor } from '../../i18n/routes';
+import { getUi } from '../../i18n/ui';
+import Scene from '../Scene.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { contact } = getHome(locale);
+const ui = getUi(locale);
+---
+
+<section class="contact" aria-labelledby="iletisim">
+  <Scene name="closing" locale={locale} alt={contact.sceneAlt} class="contact-media" />
+  <div class="contact-scrim" aria-hidden="true"></div>
+  <div class="contact-body">
+    <h2 id="iletisim">{contact.heading}</h2>
+    <p class="contact-lead">{contact.lead}</p>
+    <p class="contact-email">
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+      <button type="button" data-copy-email={CONTACT.email} data-copied-label={contact.emailCopied} hidden>{contact.copyEmail}</button>
+    </p>
+    <p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
+    <ul class="contact-links">
+      <li>
+        <a href={CONTACT.githubUrl} rel="me noopener"><span lang="en">{ui.githubLabel}</span> · {CONTACT.githubUser}</a>
+      </li>
+      <li><a href={pathFor('cv', locale)}>{contact.cvLabel}</a></li>
+    </ul>
+  </div>
+</section>
+
+<script>
+  const COPIED_LABEL_MS = 2200;
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-email]').forEach((button) => {
+    // Pano erişimi yoksa buton gizli kalır; e-posta bağlantısı her durumda çalışır.
+    if (!navigator.clipboard?.writeText) return;
+    button.hidden = false;
+    const idleLabel = button.textContent ?? '';
+    const status = button.closest('section')?.querySelector<HTMLElement>('[data-copy-status]');
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copyEmail ?? '');
+        const copied = button.dataset.copiedLabel ?? idleLabel;
+        button.textContent = copied;
+        if (status) status.textContent = copied;
+        window.setTimeout(() => {
+          button.textContent = idleLabel;
+          if (status) status.textContent = '';
+        }, COPIED_LABEL_MS);
+      } catch (error) {
+        console.warn('[iletişim] e-posta kopyalanamadı:', error);
+      }
+    });
+  });
+</script>
+
+<style>
+  .contact {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-height: 88svh;
+    isolation: isolate;
+  }
+
+  .contact :global(.contact-media) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .contact-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(to bottom, var(--color-ground) 0%, oklch(0.115 0.014 255 / 0.45) 30%, oklch(0.115 0.014 255 / 0.82) 70%, var(--color-ground) 100%),
+      linear-gradient(to right, oklch(0.115 0.014 255 / 0.75) 0%, transparent 70%);
+  }
+
+  .contact-body {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: 6rem 1.25rem 4.5rem;
+  }
+
+  h2 {
+    font-size: clamp(2.375rem, 1.2rem + 5.2vw, 5rem);
+    font-variation-settings: 'opsz' 144;
+  }
+
+  .contact-lead {
+    max-width: 44ch;
+    margin-top: 1.25rem;
+    font-size: 1.125rem;
+  }
+
+  .contact-email {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    align-items: center;
+    margin-top: 2.5rem;
+  }
+
+  .contact-email a {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 1rem + 2vw, 2.5rem);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 1px;
+  }
+
+  .contact-email a:hover {
+    color: var(--color-accent);
+  }
+
+  .contact-email button {
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-line);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .contact-email button:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    margin-top: 1.5rem;
+  }
+
+  .contact-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-weight: 500;
+    text-decoration-color: var(--color-line);
+  }
+
+  .contact-links a:hover {
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 640px) {
+    .contact-body {
+      padding: 8rem 2rem 6rem;
+    }
+  }
+</style>

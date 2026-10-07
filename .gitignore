@@ -1,0 +1,26 @@
+# Brainstorm mockup'ları (yerel, repoya girmez)
+.superpowers/
+
+# Yerel, otelle ilgili tanımlayıcı notlar
+CLAUDE.local.md
+
+# Bağımlılıklar ve build çıktısı
+node_modules/
+dist/
+.astro/
+
+# Yerel araç ve skill dosyaları
+.agents/
+.claude/
+.codex/
+.impeccable/
+skills-lock.json
+
+# Yerel listeler, ham medya, ortam dosyaları
+anonymity-words.local.txt
+media-src/
+.env*
+
+# Eski adlandırmadan kalan medya (silinecek)
+public/media/*-scrub.mp4
+public/media/*-loop.mp4

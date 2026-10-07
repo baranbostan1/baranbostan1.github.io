@@ -1,0 +1,129 @@
+---
+import { getHome } from '../../content';
+import type { Locale } from '../../i18n/locales';
+import Scene from '../Scene.astro';
+
+interface Props {
+  locale: Locale;
+  sceneAlt: string;
+}
+
+const { locale, sceneAlt } = Astro.props;
+const { hero } = getHome(locale);
+---
+
+<div class="hero-track" data-hero-track>
+<section class="hero" aria-labelledby="hero-title">
+  <Scene name="hero" locale={locale} alt={sceneAlt} eager class="hero-media" />
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="hero-body">
+    <h1 id="hero-title" data-reveal-words>{hero.title}</h1>
+    <p class="hero-lead">{hero.lead}</p>
+  </div>
+  <p class="hero-hint" aria-hidden="true">
+    <span>{hero.scrollHint}</span>
+    <svg viewBox="0 0 12 40" width="12" height="40" focusable="false">
+      <path d="M6 0v38M1 33l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1"></path>
+    </svg>
+  </p>
+</section>
+</div>
+
+<style>
+  /* scrub modunda hero ekranda sabit kalır; bu kapsayıcının fazladan yüksekliği (60svh) videoyu ilerleten kaydırma mesafesidir. */
+  :global(html[data-cine='scrub']) .hero-track {
+    height: 160svh;
+  }
+
+  :global(html[data-cine='scrub']) .hero {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+  }
+
+  .hero {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-height: 100svh;
+    isolation: isolate;
+  }
+
+  .hero :global(.hero-media) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  /* Dar ekranda kadraj sağa kayar; sahnenin öznesi (ekran) görüntüde kalır. */
+  .hero :global(.hero-media img),
+  .hero :global(.hero-media video) {
+    object-position: 80% 50%;
+  }
+
+  @media (min-width: 1024px) {
+    .hero :global(.hero-media img),
+    .hero :global(.hero-media video) {
+      object-position: 50% 50%;
+    }
+  }
+
+  /* Metnin okunması için: görüntü ne kadar açık olursa olsun alt ve sol kenar koyulaşır. */
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(to top, var(--color-ground) 0%, oklch(0.115 0.014 255 / 0.86) 28%, oklch(0.115 0.014 255 / 0.3) 62%, oklch(0.115 0.014 255 / 0.55) 100%),
+      linear-gradient(to right, oklch(0.115 0.014 255 / 0.7) 0%, transparent 65%);
+  }
+
+  .hero-body {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: 7rem 1.25rem 4.5rem;
+  }
+
+  h1 {
+    max-width: 17ch;
+    font-size: clamp(2.375rem, 1.2rem + 5.2vw, 5rem);
+    font-variation-settings: 'opsz' 144;
+  }
+
+  .hero-lead {
+    max-width: 52ch;
+    margin-top: 1.75rem;
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    line-height: 1.55;
+    color: var(--color-ink);
+  }
+
+  .hero-hint {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.5rem;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-ink-soft);
+    font-size: 0.875rem;
+  }
+
+  .hero-hint span {
+    writing-mode: vertical-rl;
+  }
+
+  @media (min-width: 640px) {
+    .hero-body {
+      padding: 8rem 2rem 6rem;
+    }
+
+    .hero-hint {
+      right: 2rem;
+      bottom: 2.5rem;
+      display: flex;
+    }
+  }
+</style>

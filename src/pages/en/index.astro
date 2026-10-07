@@ -1,0 +1,45 @@
+---
+import About from '../../components/home/About.astro';
+import BalanceTicker from '../../components/home/BalanceTicker.astro';
+import Contact from '../../components/home/Contact.astro';
+import Hero from '../../components/home/Hero.astro';
+import HowIWork from '../../components/home/HowIWork.astro';
+import LiveStrip from '../../components/home/LiveStrip.astro';
+import ProjectScene from '../../components/home/ProjectScene.astro';
+import { getHome, getProjects } from '../../content';
+import { CONTACT } from '../../content/types';
+import { getUi } from '../../i18n/ui';
+import Base from '../../layouts/Base.astro';
+
+const locale = 'en';
+const home = getHome(locale);
+const ui = getUi(locale);
+const projects = getProjects(locale);
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: CONTACT.name,
+  email: `mailto:${CONTACT.email}`,
+  url: new URL('/', Astro.site).href,
+  sameAs: [CONTACT.githubUrl],
+};
+---
+
+<Base page="home" locale={locale} title={home.metaTitle} description={home.metaDescription}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(person)} />
+  <Hero locale={locale} sceneAlt={home.hero.sceneAlt} />
+  <div id="projeler">
+    <h2 class="sr-only">{ui.projectsHeading}</h2>
+    {
+      projects.map((project, index) => (
+        <ProjectScene project={project} locale={locale} sceneAlt={project.sceneAlt} mediaSide={index % 2 === 0 ? 'start' : 'end'}>
+          {project.id === 'lobby' && <LiveStrip locale={locale} />}
+          {project.id === 'agency' && <BalanceTicker locale={locale} />}
+        </ProjectScene>
+      ))
+    }
+  </div>
+  <HowIWork locale={locale} />
+  <About locale={locale} />
+  <Contact locale={locale} />
+</Base>

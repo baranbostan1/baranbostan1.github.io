@@ -1,0 +1,152 @@
+---
+import { getHome } from '../../content';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { howIWork } = getHome(locale);
+---
+
+<section class="how" aria-labelledby="nasil-calisiyorum">
+  <div class="how-head">
+    <h2 id="nasil-calisiyorum">{howIWork.heading}</h2>
+    <p>{howIWork.lead}</p>
+  </div>
+  <ol class="how-steps">
+    {
+      howIWork.steps.map((step) => (
+        <li>
+          <h3>{step.title}</h3>
+          <p>{step.text}</p>
+          <p class="how-who">
+            <span>{howIWork.whoLabel}:</span> {step.who}
+          </p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .how {
+    display: grid;
+    gap: 3rem;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: 5rem 1.25rem;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+  }
+
+  .how-head p {
+    max-width: 48ch;
+    margin-top: 1.25rem;
+    font-size: 1.125rem;
+    line-height: 1.55;
+  }
+
+  /* Adımları bağlayan çizgi: listenin sol kenarı. Sıra bilgi taşıdığı için numaralar görünür. */
+  .how-steps {
+    position: relative;
+    display: grid;
+    gap: 2.25rem;
+    padding-left: 2.75rem;
+    counter-reset: step;
+  }
+
+  .how-steps::before {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 0.6875rem;
+    width: 1px;
+    background-color: var(--color-accent);
+    transform-origin: top;
+  }
+
+  .how-steps li {
+    position: relative;
+    counter-increment: step;
+  }
+
+  .how-steps li::before {
+    content: counter(step);
+    position: absolute;
+    top: 0.125rem;
+    left: -2.75rem;
+    display: grid;
+    place-items: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 50%;
+    background-color: var(--color-ground);
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  .how-steps p {
+    max-width: 44ch;
+    margin-top: 0.375rem;
+  }
+
+  .how-who {
+    color: var(--color-ink-soft);
+    font-size: 0.9375rem;
+  }
+
+  .how-who span {
+    color: var(--color-accent);
+  }
+
+  /* Çizgi, bölüm kaydırıldıkça çizilir. Desteklemeyen tarayıcıda ve hareket kapalıyken tam görünür. */
+  @supports (animation-timeline: view()) {
+    :global(html[data-cine='scrub']) .how-steps::before,
+    :global(html[data-cine='play']) .how-steps::before {
+      animation: how-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 60%;
+    }
+  }
+
+  @keyframes how-draw {
+    from {
+      transform: scaleY(0);
+    }
+
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .how {
+      padding: 7rem 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .how {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 4.5rem;
+      padding-block: 9rem;
+    }
+
+    .how-head {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
+  }
+</style>

@@ -1,0 +1,117 @@
+---
+// Ana sayfadaki proje bölümü: görüntü + bir cümle sorun, bir cümle sonuç, etiketler ve proje sayfasına bağlantı.
+import { getHome } from '../../content';
+import type { ProjectContent } from '../../content/types';
+import type { Locale } from '../../i18n/locales';
+import { pathFor } from '../../i18n/routes';
+import { getUi } from '../../i18n/ui';
+import ArrowLink from '../ArrowLink.astro';
+import Scene from '../Scene.astro';
+import TechTags from '../TechTags.astro';
+
+interface Props {
+  project: ProjectContent;
+  locale: Locale;
+  sceneAlt: string;
+  /** Görüntünün metnin hangi yanında duracağı (geniş ekranda) */
+  mediaSide?: 'start' | 'end';
+}
+
+const { project, locale, sceneAlt, mediaSide = 'start' } = Astro.props;
+const ui = getUi(locale);
+const home = getHome(locale);
+const headingId = `proje-${project.id}`;
+---
+
+<section class="project" data-media-side={mediaSide} aria-labelledby={headingId}>
+  <div class="project-media-frame" data-tilt>
+    <Scene name={project.id} locale={locale} alt={sceneAlt} class="project-media" />
+  </div>
+  <div class="project-body">
+    <h2 id={headingId}>{project.title}</h2>
+    <dl>
+      <div>
+        <dt>{ui.problemLabel}</dt>
+        <dd>{project.sceneProblem}</dd>
+      </div>
+      <div>
+        <dt>{ui.resultLabel}</dt>
+        <dd>{project.sceneResult}</dd>
+      </div>
+    </dl>
+    <slot />
+    <TechTags tags={project.tags} label={ui.technicalLabel} />
+    <ArrowLink href={pathFor(project.id, locale)} label={`${home.projectCta}: ${project.title}`}>{home.projectCta}</ArrowLink>
+  </div>
+</section>
+
+<style>
+  .project {
+    display: grid;
+    gap: 2rem;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: 4rem 1.25rem;
+  }
+
+  .project :global(.project-media) {
+    aspect-ratio: 16 / 10;
+  }
+
+  .project-media-frame {
+    align-self: center;
+    transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .project-body {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 1.75rem;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+  }
+
+  dl {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 44ch;
+  }
+
+  dt {
+    color: var(--color-accent);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  dd {
+    margin-top: 0.25rem;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 640px) {
+    .project {
+      padding: 6rem 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .project {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 4.5rem;
+      padding-block: 8rem;
+    }
+
+    .project[data-media-side='end'] {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .project[data-media-side='end'] .project-media-frame {
+      order: 2;
+    }
+  }
+</style>

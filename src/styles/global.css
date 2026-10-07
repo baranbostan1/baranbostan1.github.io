@@ -1,0 +1,143 @@
+@import 'tailwindcss';
+@import './fonts.css';
+
+/* Tasarım belirteçleri. Başlangıç değerleri; görsel taslakta (plan Görev 4) kesinleşir. */
+@theme {
+  --color-ground: oklch(0.115 0.014 255);
+  --color-surface: oklch(0.165 0.014 255);
+  --color-line: oklch(0.3 0.016 255);
+  --color-ink: oklch(0.94 0.015 80);
+  --color-ink-soft: oklch(0.72 0.02 75);
+  --color-accent: oklch(0.74 0.13 62);
+  --color-danger: oklch(0.74 0.16 28);
+
+  --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Schibsted Grotesk Variable', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  /* Etiketler için alt sınır 12.8px (0.8rem). */
+  --text-label: 0.8rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.08em;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-ground);
+    color: var(--color-ink);
+    color-scheme: dark;
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    position: relative;
+    min-height: 100dvh;
+    font-size: 1rem;
+    line-height: 1.6;
+    overflow-x: clip;
+    isolation: isolate;
+  }
+
+  /* Zemin düz değildir: sayfa boyunca sağlı sollu yer değiştiren sıcak ışık havuzları (görüntülerdeki lamba ışığının devamı). */
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-image:
+      radial-gradient(58rem 36rem at 88% 22rem, oklch(0.74 0.13 62 / 0.11), transparent 70%),
+      radial-gradient(52rem 34rem at 6% 78rem, oklch(0.62 0.12 45 / 0.1), transparent 70%),
+      radial-gradient(46rem 30rem at 70% 132rem, oklch(0.5 0.09 250 / 0.14), transparent 70%);
+    background-size: 100% 168rem;
+    pointer-events: none;
+  }
+
+  /* İnce film greni: düz yüzeylerdeki renk bantlanmasını kırar ve zemini görüntülerle aynı dokuya getirir. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+}
+
+@layer components {
+  /* Klavye kullanıcıları için: odaklanınca görünen "içeriğe geç" bağlantısı. */
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    padding: 0.625rem 1rem;
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
+  /* İmleci izleyen ışık (yalnızca scrub modunda eklenir). */
+  .cursor-light {
+    position: fixed;
+    top: -18rem;
+    left: -18rem;
+    z-index: 40;
+    width: 36rem;
+    height: 36rem;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, oklch(0.74 0.13 62 / 0.09), transparent);
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cursor-light[data-active] {
+    opacity: 1;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+  }
+}

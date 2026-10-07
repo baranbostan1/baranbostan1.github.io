@@ -1,0 +1,125 @@
+---
+// Acenta sahnesindeki bakiye sayacı: uydurma başlangıç verisine bir fatura, sonra bir ödeme uygulanır;
+// bakiye gerçek hesap fonksiyonlarıyla değişir. Hareket kapalıyken son değer sabit yazılır.
+import { getHome } from '../../content';
+import { formatKurus } from '../../demos/agency/amount';
+import { summarize } from '../../demos/agency/ledger';
+import { SEED } from '../../demos/agency/seed';
+import type { Locale } from '../../i18n/locales';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { live } = getHome(locale);
+const startBalance = formatKurus(summarize(SEED).balanceKurus, locale);
+---
+
+<div class="balance-ticker" data-balance-ticker data-locale={locale} data-invoice={live.invoiceAdded} data-payment={live.paymentAdded}>
+  <p class="bt-label">{live.balanceLabel}</p>
+  <p class="bt-value" data-balance-value>{startBalance}</p>
+  <p class="bt-event" data-balance-event aria-hidden="true">&nbsp;</p>
+  <p class="bt-note">{live.balanceNote}</p>
+</div>
+
+<script>
+  import { formatKurus } from '../../demos/agency/amount';
+  import { addInvoice, addPayment, summarize, type Ledger } from '../../demos/agency/ledger';
+  import { SEED } from '../../demos/agency/seed';
+  import type { Locale } from '../../i18n/locales';
+
+  const DEMO_AGENCY = 'Pusula Tur';
+  const INVOICE_KURUS = 1_850_000;
+  const PAYMENT_KURUS = 2_960_000;
+  const STEP_DELAY_MS = 1100;
+  const COUNT_DURATION_MS = 700;
+
+  const easeOutCubic = (t: number): number => 1 - (1 - t) ** 3;
+
+  function initBalanceTicker(root: HTMLElement): void {
+    const locale: Locale = root.dataset.locale === 'en' ? 'en' : 'tr';
+    const value = root.querySelector<HTMLElement>('[data-balance-value]');
+    const event = root.querySelector<HTMLElement>('[data-balance-event]');
+    if (!value || !event) return;
+
+    const withInvoice: Ledger = addInvoice(SEED, { id: 'demo-f', agency: DEMO_AGENCY, date: '2026-10-01', invoiceNo: 'F-DEMO', amountKurus: INVOICE_KURUS });
+    const withPayment: Ledger = addPayment(withInvoice, { id: 'demo-o', agency: DEMO_AGENCY, date: '2026-10-02', amountKurus: PAYMENT_KURUS });
+    const steps = [
+      { ledger: withInvoice, text: `${root.dataset.invoice ?? ''} · +${formatKurus(INVOICE_KURUS, locale)}` },
+      { ledger: withPayment, text: `${root.dataset.payment ?? ''} · −${formatKurus(PAYMENT_KURUS, locale)}` },
+    ];
+    const finalBalance = summarize(withPayment).balanceKurus;
+
+    // Hareket kapalıysa sayaç oynamaz; son değer yazılır.
+    if (document.documentElement.dataset.cine === 'static') {
+      value.textContent = formatKurus(finalBalance, locale);
+      return;
+    }
+
+    const countTo = (from: number, to: number): Promise<void> =>
+      new Promise((resolve) => {
+        const start = performance.now();
+        const frame = (now: number): void => {
+          const progress = Math.min(1, (now - start) / COUNT_DURATION_MS);
+          value.textContent = formatKurus(Math.round(from + (to - from) * easeOutCubic(progress)), locale);
+          if (progress < 1) requestAnimationFrame(frame);
+          else resolve();
+        };
+        requestAnimationFrame(frame);
+      });
+
+    const wait = (ms: number): Promise<void> => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+    const play = async (): Promise<void> => {
+      let current = summarize(SEED).balanceKurus;
+      for (const step of steps) {
+        await wait(STEP_DELAY_MS);
+        event.textContent = step.text;
+        const next = summarize(step.ledger).balanceKurus;
+        await countTo(current, next);
+        current = next;
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        void play();
+      },
+      { threshold: 0.6 },
+    );
+    observer.observe(root);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-balance-ticker]').forEach(initBalanceTicker);
+</script>
+
+<style>
+  .balance-ticker {
+    width: 100%;
+    padding-block: 1rem;
+    border-block: 1px solid var(--color-line);
+  }
+
+  .bt-label,
+  .bt-note {
+    color: var(--color-ink-soft);
+    font-size: 0.875rem;
+  }
+
+  .bt-value {
+    font-family: var(--font-mono);
+    font-size: 1.625rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bt-event {
+    min-height: 1.5rem;
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
