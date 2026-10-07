@@ -6,15 +6,15 @@ Yeni session'da önce bu dosyayı ve `DECISIONS.md`'yi oku.
 
 **Aşama 1–5 (brainstorming, tasarım bağlamı, plan, prototip, geliştirme):** Tamamlandı.
 **Aşama 6 — Audit:** Tasarım dedektörü (bulgu yok) ve bağımsız kod incelemesi yapıldı; incelemenin kritik ve önemli bulguları düzeltildi. Impeccable'ın görsel bitiş incelemesi ve `DESIGN.md` yazımı yapılmadı.
-**Aşama 7 — Doğrulama:** Tamamlandı; rapor aşağıda. **Onay F bekleniyor** (GitHub reposu ve ilk push).
-**Aşama 8 — Deploy:** Sırada (plan Görev 17).
+**Aşama 7 — Doğrulama:** Tamamlandı; rapor aşağıda (Onay F alındı).
+**Aşama 8 — Deploy:** Yayında: https://baranbostan1.github.io (repo: `baranbostan1/baranbostan1.github.io`). **Onay G bekleniyor:** Baran canlı adresi VPN kapalıyken dener.
 
 ## Plan ilerlemesi
 
 - [x] Görev 1–14 — İskelet, prototip, üç demo, ana sayfa, CV, 404/SEO
 - [x] Görev 15 — Audit: dedektör + kod incelemesi + düzeltme turu (görsel bitiş incelemesi yapılmadı)
-- [x] Görev 16 — Doğrulama → **Onay F bekleniyor**
-- [ ] Görev 17 — Deploy → Onay G
+- [x] Görev 16 — Doğrulama (Onay F)
+- [x] Görev 17 — Deploy: yayında; **Onay G bekleniyor**
 
 Ayrıntılı defter (yerel): `.superpowers/sdd/plan/progress.md`.
 
@@ -32,6 +32,8 @@ Ayrıntılı defter (yerel): `.superpowers/sdd/plan/progress.md`.
 | Medya meta verisi | Konum ya da cihaz bilgisi yok |
 | CV | İki PDF tek sayfa; metin seçilebilir; ad metin katmanında doğru okunuyor |
 
+Canlı adreste (2026-10-07): 14 adres 200, olmayan sayfa 404; ana sayfada 5 video; tarayıcı doğrulamaları sinematik 26/26, QR menü 45/45, inceleme düzeltmeleri 11/11; Lighthouse mobil on sayfada dört kategori 100.
+
 Elle denenmeyenler: gerçek bir iPhone'da video oynatma ve lobi tam ekran yedeği (taklit edilerek denendi); QR kodun telefonla okutulması (yayından sonra çalışır); LinkedIn paylaşım kartı (yayından sonra).
 
 ## Yeni session için başlangıç
@@ -42,23 +44,24 @@ Elle denenmeyenler: gerçek bir iPhone'da video oynatma ve lobi tam ekran yedeğ
 
 ## Sıradaki adımlar
 
-1. Onay F: GitHub reposu, yayınlanacak git geçmişi ve yazar adı kararları.
-2. Görev 17: `deploy.yml`, `README.md`, push, Pages ayarı, canlı adres kontrolü.
-3. Onay G: Baran canlı adresi VPN kapalıyken dener.
-4. Yayından sonra, ayrı iş: dördüncü proje (öneri: arıza ve istek takibi; "konsept" etiketiyle).
+1. Onay G: Baran canlı adresi VPN kapalıyken, telefonda ve bilgisayarda dener; QR kodu okutur; LinkedIn paylaşım kartına bakar.
+2. İsteğe bağlı: ertelenen küçük bulgular; depo sırrı `ANONYMITY_WORDS` (CI'da anonimlik denetimi için).
+3. Yayından sonra, ayrı iş: dördüncü proje (öneri: arıza ve istek takibi; "konsept" etiketiyle).
 
 ## Baran'dan beklenenler
 
-- **Onay F** ve içindeki kararlar (aşağıdaki notlara bak).
+- **Onay G:** canlı adres denemesi.
 - `public/media/hero-scrub.mp4` ve `public/media/hero-loop.mp4` dosyalarının silinmesi (eski adlandırmadan kaldı; repoya girmiyor ama yerel derlemeye kopyalanıyor).
 - Yayından sonra: gerçek bir telefonda ana sayfa, lobi "Tam ekran" ve QR kod denemesi.
 - İsteğe bağlı: kurgusal adlar için itiraz (restoran `src/demos/qr-menu/data.ts`, otel `src/demos/lobby/config.ts`); QR menü admin panelinin ekran görüntüsü.
 
 ## Notlar
 
-- **Git geçmişi olduğu gibi yayınlanmamalı.** Eski commit'lerdeki iki belge sürümünde, kurgusal ad seçimiyle ilgili gerçek adı daraltabilecek bir cümle vardı. Cümle dosyalardan çıkarıldı ama eski commit'lerde duruyor. Öneri: ilk push tek commit'lik yeni bir geçmişle yapılır. Bu, yazar adı sorusunu da çözer.
-- Git yazar adı bilgisayarda `BRN-5` olarak ayarlı; public repoda commit'lerde bu ad görünür.
-- İlk push'tan önce `npm run check:history` çalıştırılır (git geçmişini de tarar).
+- **Yayınlanan geçmiş yenidir.** GitHub'daki `main`, tek commit'lik yeni bir geçmişle başladı. Geliştirme geçmişi yerelde `yerel-gecmis` dalında duruyor; **bu dal asla push edilmez** (eski belge sürümlerinde gerçek adı daraltabilecek bir cümle var).
+- Bu repoda git yazar adı "Baran Berkay Bostan", e-posta GitHub'ın gizli adresi (yalnızca yerel repo ayarı).
+- Her push'tan önce `npm run check:history` çalıştırılır (git geçmişini de tarar).
+- Yayın: `main`e push → `.github/workflows/deploy.yml` (test → derleme → Pages). Pages kaynağı "GitHub Actions".
+- `package-lock.json` Windows'ta üretildiği için Linux'ta eksik kalan iki paket (`@emnapi/core`, `@emnapi/runtime`) geliştirme bağımlılığı olarak eklendi; yoksa CI'da `npm ci` durur.
 - Derleme sonrası (`postbuild`) iki denetim çalışır: sahnelerin görüntüsüyle çıktığı ve yeni `dist/` içinde yasaklı kelime olmadığı.
 - Doğrulama betikleri varsayılan olarak dev sunucusuna (4321) bağlanır; derlenmiş siteyi denemek için `SHOTS_BASE_URL=http://localhost:4322`. Lighthouse: `node scripts/lighthouse.mjs [mobile|desktop]`.
 - Ertelenen küçük bulgular defterde (`minor (deferred)`): lobi panelinde "-0°", "0.500" tutarının kabul edilmesi, acenta filtresinin nadir bir durumda boş görünmesi, CSV indirmede URL'nin hemen iptali, dil değiştiricinin erişilebilir adı ve birkaç küçük şey daha.

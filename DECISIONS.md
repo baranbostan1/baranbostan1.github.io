@@ -65,3 +65,9 @@
 
 - **"Bugün kullanılıyor" yazılmaz.** Baran: otel sezonluk kapandı; yeniden açıldığında kendisi orada olmayacak. Araçların kullanımı geçmiş zamanda ("sezon boyunca kullanıldı"), Baran'ın rolü geçmiş zamanda ("güncelledim", "girdim") yazılır; otelin sezonluk çalıştığı ve araçların yerinde durduğu belirtilir. Spec §5'teki "kullanılıyor" cümleleri bu kararla değişti.
 - **CV:** unvan "Resepsiyon Görevlisi"; dönem "Mayıs 2023 – Eylül 2026"; yer "Erdek, Balıkesir". Askerlik CV'de ve sitede yazılmaz (Baran'ın tercihi).
+
+### Yayın (2026-10-07)
+
+- **GitHub'a tek commit'lik yeni bir geçmiş gönderildi.** Baran'ın kararı. Geliştirme geçmişi yerelde `yerel-gecmis` dalında kalır ve push edilmez.
+- **Yazar adı bu repoda "Baran Berkay Bostan".** E-posta GitHub'ın gizli adresi.
+- **Pages kaynağı GitHub Actions.** Repo adı nedeniyle Pages kendiliğinden dal yayınıyla açılmıştı; Actions'a çevrildi.
