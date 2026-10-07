@@ -85,6 +85,7 @@ const ui = getUi(locale);
     position: absolute;
     inset: 0;
     z-index: -1;
+    mask-image: linear-gradient(to bottom, transparent, #000 26%, #000 74%, transparent);
     background: linear-gradient(to top, oklch(0.115 0.014 255 / 0.94) 0%, oklch(0.115 0.014 255 / 0.8) 46%, oklch(0.115 0.014 255 / 0.12) 82%, transparent 100%);
   }
 
@@ -98,6 +99,12 @@ const ui = getUi(locale);
     .contact :global(.contact-media video) {
       object-position: 100% 50%;
       transform: translateX(9%);
+    }
+
+    /* Görüntü sağa kaydırıldığı için sol kenarı açıkta kalır; o kenar da yumuşakça kaybolur. */
+    .contact :global(.contact-media) {
+      mask-image: linear-gradient(to bottom, transparent, #000 26%, #000 74%, transparent), linear-gradient(to right, transparent 9%, #000 30%);
+      mask-composite: intersect;
     }
   }
 
