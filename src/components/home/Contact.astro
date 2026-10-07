@@ -29,7 +29,7 @@ const ui = getUi(locale);
     <p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
     <ul class="contact-links">
       <li>
-        <a href={CONTACT.githubUrl} rel="me noopener"><span lang="en">{ui.githubLabel}</span> · {CONTACT.githubUser}</a>
+        <a href={CONTACT.githubUrl} rel="me noopener"><span lang="en">{ui.githubLabel}</span><span aria-hidden="true">&nbsp;·&nbsp;</span><span>{CONTACT.githubUser}</span></a>
       </li>
       <li><a href={pathFor('cv', locale)}>{contact.cvLabel}</a></li>
     </ul>
@@ -71,19 +71,34 @@ const ui = getUi(locale);
     isolation: isolate;
   }
 
+  /* Görüntü üstten ve alttan saydamlaşarak zemine karışır; opak bir şerit olmadığı için zemindeki ışıklar kesilmez. */
   .contact :global(.contact-media) {
     position: absolute;
     inset: 0;
     z-index: -2;
+    background-color: transparent;
+    mask-image: linear-gradient(to bottom, transparent, #000 26%, #000 74%, transparent);
   }
 
+  /* Dar ekranda metin tüm genişliği kaplar: görüntü üstte açık kalır, metnin arkası koyulaşır. */
   .contact-scrim {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background:
-      linear-gradient(to bottom, var(--color-ground) 0%, oklch(0.115 0.014 255 / 0.45) 30%, oklch(0.115 0.014 255 / 0.82) 70%, var(--color-ground) 100%),
-      linear-gradient(to right, oklch(0.115 0.014 255 / 0.75) 0%, transparent 70%);
+    background: linear-gradient(to top, oklch(0.115 0.014 255 / 0.94) 0%, oklch(0.115 0.014 255 / 0.8) 46%, oklch(0.115 0.014 255 / 0.12) 82%, transparent 100%);
+  }
+
+  /* Geniş ekranda yalnızca metin sütununun arkası koyulaşır; üç ekran sağda açık kalır. */
+  @media (min-width: 900px) {
+    .contact-scrim {
+      background: linear-gradient(to right, oklch(0.115 0.014 255 / 0.9) 0%, oklch(0.115 0.014 255 / 0.72) 34%, oklch(0.115 0.014 255 / 0.18) 62%, transparent 100%);
+    }
+
+    .contact :global(.contact-media img),
+    .contact :global(.contact-media video) {
+      object-position: 100% 50%;
+      transform: translateX(9%);
+    }
   }
 
   .contact-body {

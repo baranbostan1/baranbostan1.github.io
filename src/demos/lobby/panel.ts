@@ -9,6 +9,8 @@ import { parseWeather, roundTemperature, WEATHER_URLS, type Weather } from './we
 
 const STAGE_WIDTH = 1920;
 const STAGE_HEIGHT = 1080;
+// Sayfa içi tam ekranda çıkış düğmesi için sahnenin üstünde bırakılan boş şerit.
+const EXPANDED_BAR_PX = 48;
 const FETCH_TIMEOUT_MS = 8000;
 const FETCH_RETRIES = 2;
 const REFRESH_MS = 15 * 60 * 1000;
@@ -159,9 +161,11 @@ export function initLobbyPanel(root: HTMLElement): void {
   // 1920×1080 sahne, çerçeveye oranı bozulmadan tek bir ölçekle sığdırılır ve ortalanır
   // (tam ekranda ekran 16:9 değilse kenarlarda boşluk kalır).
   const fit = (): void => {
-    const scale = Math.min(frame.clientWidth / STAGE_WIDTH, frame.clientHeight / STAGE_HEIGHT);
+    const bar = frame.hasAttribute('data-expanded') ? EXPANDED_BAR_PX : 0;
+    const available = frame.clientHeight - bar;
+    const scale = Math.min(frame.clientWidth / STAGE_WIDTH, available / STAGE_HEIGHT);
     const offsetX = (frame.clientWidth - STAGE_WIDTH * scale) / 2;
-    const offsetY = (frame.clientHeight - STAGE_HEIGHT * scale) / 2;
+    const offsetY = bar + (available - STAGE_HEIGHT * scale) / 2;
     stage.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
   };
 

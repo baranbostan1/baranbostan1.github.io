@@ -5,6 +5,7 @@ export const ui: UiStrings = {
   skipToContent: 'İçeriğe geç',
   switchLanguageName: 'English',
   footerNote: 'Bu site AI destekli geliştirmeyle yapıldı.',
+  imageryNote: 'Sahne görüntüleri temsilidir ve yapay zekâ ile üretilmiştir; gerçek mekânı ya da araçların ekran görüntülerini göstermez.',
   emailLabel: 'E-posta',
   githubLabel: 'GitHub',
   problemLabel: 'Sorun',

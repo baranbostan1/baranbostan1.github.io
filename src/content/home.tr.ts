@@ -58,7 +58,7 @@ export const home: HomeContent = {
   },
   contact: {
     heading: 'İletişim',
-    lead: 'Bir pozisyon ya da proje için e-postayla ulaşabilirsiniz. Uzaktan çalışmaya açığım.',
+    lead: 'Bir pozisyon ya da proje için e‑postayla ulaşabilirsiniz. Uzaktan çalışmaya açığım.',
     copyEmail: 'E-postayı kopyala',
     emailCopied: 'Kopyalandı',
     cvLabel: 'CV',

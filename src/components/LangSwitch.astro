@@ -19,6 +19,5 @@ const target = page === 'notFound' ? alternateFor('home', locale) : alternateFor
   href={target.path}
   hreflang={target.locale}
 >
-  <span aria-hidden="true" class="text-ink-soft">{locale.toUpperCase()} /</span>
   <span lang={target.locale}>{ui.switchLanguageName}</span>
 </a>

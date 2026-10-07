@@ -5,6 +5,7 @@ export const ui: UiStrings = {
   skipToContent: 'Skip to content',
   switchLanguageName: 'Türkçe',
   footerNote: 'This site was built with AI-assisted development.',
+  imageryNote: 'Scene images are illustrative and AI-generated; they do not show the real premises or screenshots of the tools.',
   emailLabel: 'Email',
   githubLabel: 'GitHub',
   problemLabel: 'Problem',

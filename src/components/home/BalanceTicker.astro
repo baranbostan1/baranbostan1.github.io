@@ -1,6 +1,7 @@
 ---
-// Acenta sahnesindeki bakiye sayacı: uydurma başlangıç verisine bir fatura, sonra bir ödeme uygulanır;
-// bakiye gerçek hesap fonksiyonlarıyla değişir. Hareket kapalıyken son değer sabit yazılır.
+// Acenta sahnesindeki bakiye sayacı: demo verisinin son faturası ve son ödemesi sırayla uygulanır;
+// bakiye gerçek hesap fonksiyonlarıyla değişir ve demonun açılışta gösterdiği rakamda biter.
+// Hareket kapalıyken (ve JavaScript yokken) doğrudan o son rakam yazılır.
 import { getHome } from '../../content';
 import { formatKurus } from '../../demos/agency/amount';
 import { summarize } from '../../demos/agency/ledger';
@@ -29,9 +30,6 @@ const startBalance = formatKurus(summarize(SEED).balanceKurus, locale);
   import { SEED } from '../../demos/agency/seed';
   import type { Locale } from '../../i18n/locales';
 
-  const DEMO_AGENCY = 'Pusula Tur';
-  const INVOICE_KURUS = 1_850_000;
-  const PAYMENT_KURUS = 2_960_000;
   const STEP_DELAY_MS = 1100;
   const COUNT_DURATION_MS = 700;
 
@@ -43,11 +41,16 @@ const startBalance = formatKurus(summarize(SEED).balanceKurus, locale);
     const event = root.querySelector<HTMLElement>('[data-balance-event]');
     if (!value || !event) return;
 
-    const withInvoice: Ledger = addInvoice(SEED, { id: 'demo-f', agency: DEMO_AGENCY, date: '2026-10-01', invoiceNo: 'F-DEMO', amountKurus: INVOICE_KURUS });
-    const withPayment: Ledger = addPayment(withInvoice, { id: 'demo-o', agency: DEMO_AGENCY, date: '2026-10-02', amountKurus: PAYMENT_KURUS });
+    // Demo verisinin son faturası ve son ödemesi çıkarılır, sonra sırayla geri eklenir.
+    const lastInvoice = SEED.invoices[SEED.invoices.length - 1];
+    const lastPayment = SEED.payments[SEED.payments.length - 1];
+    if (!lastInvoice || !lastPayment) return;
+    const base: Ledger = { invoices: SEED.invoices.slice(0, -1), payments: SEED.payments.slice(0, -1) };
+    const withInvoice: Ledger = addInvoice(base, lastInvoice);
+    const withPayment: Ledger = addPayment(withInvoice, lastPayment);
     const steps = [
-      { ledger: withInvoice, text: `${root.dataset.invoice ?? ''} · +${formatKurus(INVOICE_KURUS, locale)}` },
-      { ledger: withPayment, text: `${root.dataset.payment ?? ''} · −${formatKurus(PAYMENT_KURUS, locale)}` },
+      { ledger: withInvoice, text: `${root.dataset.invoice ?? ''} · +${formatKurus(lastInvoice.amountKurus, locale)}` },
+      { ledger: withPayment, text: `${root.dataset.payment ?? ''} · −${formatKurus(lastPayment.amountKurus, locale)}` },
     ];
     const finalBalance = summarize(withPayment).balanceKurus;
 
@@ -56,6 +59,9 @@ const startBalance = formatKurus(summarize(SEED).balanceKurus, locale);
       value.textContent = formatKurus(finalBalance, locale);
       return;
     }
+
+    // Sayaç oynayacaksa başlangıç değeri hemen yazılır (bölüm görünüme girmeden önce).
+    value.textContent = formatKurus(summarize(base).balanceKurus, locale);
 
     const countTo = (from: number, to: number): Promise<void> =>
       new Promise((resolve) => {
@@ -72,7 +78,7 @@ const startBalance = formatKurus(summarize(SEED).balanceKurus, locale);
     const wait = (ms: number): Promise<void> => new Promise((resolve) => window.setTimeout(resolve, ms));
 
     const play = async (): Promise<void> => {
-      let current = summarize(SEED).balanceKurus;
+      let current = summarize(base).balanceKurus;
       for (const step of steps) {
         await wait(STEP_DELAY_MS);
         event.textContent = step.text;

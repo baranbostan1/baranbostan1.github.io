@@ -15,7 +15,7 @@ const year = new Date().getFullYear();
 <footer class="border-t border-line">
   <div class="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-8 text-ink-soft sm:flex-row sm:items-center sm:justify-between sm:px-8">
     <p class="text-sm">© {year} {CONTACT.name}</p>
-    <p class="text-sm">{ui.footerNote}</p>
+    <p class="max-w-[52ch] text-sm">{ui.footerNote} {ui.imageryNote}</p>
     <ul class="flex gap-6 text-sm font-medium">
       <li>
         <a class="inline-flex min-h-11 items-center text-ink hover:text-accent" href={`mailto:${CONTACT.email}`}>{ui.emailLabel}</a>

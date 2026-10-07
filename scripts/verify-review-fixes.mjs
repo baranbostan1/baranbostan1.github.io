@@ -9,6 +9,8 @@ const shotDir = process.argv[2];
 const results = [];
 const check = (name, pass, detail = '') => results.push({ name, pass, detail });
 const STALL_WAIT_MS = 12_500;
+// Sayfa içi tam ekranda çıkış düğmesi için sahnenin üstünde ayrılan şerit (panel.ts ile aynı değer).
+const EXIT_BAR_PX = 48;
 
 const browser = await chromium.launch({ channel: 'msedge', args: ['--autoplay-policy=no-user-gesture-required'] });
 try {
@@ -97,7 +99,7 @@ try {
       return { expanded: frame.hasAttribute('data-expanded'), stageLong: Math.round(Math.max(stage.width, stage.height)), stageShort: Math.round(Math.min(stage.width, stage.height)), vw: innerWidth, vh: innerHeight };
     });
     const after = await sizeOf();
-    check('[lobi mobil] çerçeve ekranı kaplar ve yan çevrilir', expanded.expanded && expanded.stageLong > expanded.vw && expanded.stageLong <= expanded.vh + 2 && Math.abs(expanded.stageShort - expanded.vw) <= 2, JSON.stringify(expanded));
+    check('[lobi mobil] çerçeve ekranı kaplar ve yan çevrilir', expanded.expanded && expanded.stageLong > expanded.vw && expanded.stageLong <= expanded.vh + 2 && Math.abs(expanded.stageShort - (expanded.vw - EXIT_BAR_PX)) <= 2, JSON.stringify(expanded));
     check('[lobi mobil] oda satırı yazısı okunur boyuta gelir (≥ 12px)', after >= 12, `${before.toFixed(1)}px → ${after.toFixed(1)}px`);
     if (shotDir) await page.screenshot({ path: path.join(shotDir, 'lobby-expanded-phone.png') });
     await page.getByRole('button', { name: 'Tam ekrandan çık' }).click();

@@ -5,6 +5,7 @@ export interface UiStrings {
   skipToContent: string;
   switchLanguageName: string;
   footerNote: string;
+  imageryNote: string;
   emailLabel: string;
   githubLabel: string;
   problemLabel: string;

@@ -201,11 +201,11 @@ const CURRENCIES = [
     overflow: hidden;
   }
 
-  /* Alt köşede durur: orada yalnızca kayan duyuru bandı vardır, sabit bir bilgi örtülmez. */
+  /* Sahnenin üstünde ayrılan boş şeritte durur (panel.ts sahneyi o kadar aşağıdan başlatır); içeriği örtmez. */
   .lb-close {
     position: absolute;
+    top: 0.125rem;
     right: 0.5rem;
-    bottom: 0.5rem;
     z-index: 2;
     min-height: 2.75rem;
     padding-inline: 1rem;
@@ -222,7 +222,8 @@ const CURRENCIES = [
     top: 0;
     left: 0;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    /* Orta satır küçülebilir: alt bant (duyurular) iki satıra çıksa da sahnenin içinde kalır. */
+    grid-template-rows: auto minmax(0, 1fr) auto;
     width: 1920px;
     height: 1080px;
     padding: 64px 72px 0;
@@ -418,13 +419,11 @@ const CURRENCIES = [
     grid-template-columns: 1fr 1fr;
     padding: 0.1875rem;
     border: 1px solid var(--color-line);
-    border-radius: 999px;
   }
 
   .lb-switch button {
     min-height: 2.75rem;
     padding-inline: 1.25rem;
-    border-radius: 999px;
     color: var(--color-ink-soft);
     font-weight: 500;
     cursor: pointer;
@@ -500,6 +499,7 @@ const CURRENCIES = [
     .lb-ticker-track {
       flex-wrap: wrap;
       width: auto;
+      padding-block: 8px;
       animation: none;
     }
 
