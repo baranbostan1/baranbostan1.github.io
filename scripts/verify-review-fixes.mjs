@@ -23,7 +23,7 @@ try {
       placeholders: document.querySelectorAll('.scene-placeholder').length,
       posterLoaded: (document.querySelector('.scene-end img')?.naturalWidth ?? 0) > 0,
     }));
-    check('[derleme] ana sayfada 5 video, yer tutucu yok', counts.videos === 5 && counts.placeholders === 0, JSON.stringify(counts));
+    check('[derleme] ana sayfada 6 video, yer tutucu yok', counts.videos === 6 && counts.placeholders === 0, JSON.stringify(counts));
     check('[derleme] hero sabit karesi yüklendi', counts.posterLoaded);
     await page.context().close();
   }
