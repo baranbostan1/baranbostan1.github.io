@@ -54,8 +54,12 @@ export function initHelpdeskBoard(root: HTMLElement): void {
 
   const context = (): CardContext => ({ strings, locale, now: state.now });
   const cardOf = (id: string): HTMLElement | null => [...board.querySelectorAll<HTMLElement>('[data-ticket]')].find((card) => card.dataset.ticket === id) ?? null;
+  // Alan önce boşaltılır: aynı mesaj art arda geldiğinde de ekran okuyucu yeniden okusun.
   const announce = (message: string): void => {
-    status.textContent = message;
+    status.textContent = '';
+    window.requestAnimationFrame(() => {
+      status.textContent = message;
+    });
   };
 
   const renderSummary = (): void => {
@@ -98,7 +102,7 @@ export function initHelpdeskBoard(root: HTMLElement): void {
 
   /** Yeni listeyi kaydeder, panoyu yeniden çizer ve odağı eylemin yapıldığı talebe geri verir. */
   const commit = (tickets: readonly Ticket[], focus: { id: string; target: FocusTarget } | null): void => {
-    memoryNote.hidden = saveTickets(store, tickets);
+    memoryNote.hidden = saveTickets(store, tickets, locale);
     state = { tickets, now: Date.now() };
     render();
     if (focus) focusTicket(focus.id, focus.target);
@@ -178,7 +182,7 @@ export function initHelpdeskBoard(root: HTMLElement): void {
 
   required<HTMLButtonElement>(root, '[data-reset]').addEventListener('click', () => {
     if (!window.confirm(strings.resetConfirm)) return;
-    clearTickets(store);
+    clearTickets(store, locale);
     showErrors({});
     form.reset();
     fields.priority.value = DEFAULT_PRIORITY;

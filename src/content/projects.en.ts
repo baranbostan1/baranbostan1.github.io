@@ -90,7 +90,7 @@ const helpdesk: ProjectContent = {
     'I built a board that gathers the requests in one place. Each request is shown by priority and status; it says who has it, how long it has been open, and whether it has passed its target time.',
   technical: [
     'TypeScript; no backend, data stays in the browser only (localStorage).',
-    'Four statuses (New, In progress, Waiting for user, Resolved) and the transitions allowed between them; an unassigned request cannot be started.',
+    'Four statuses (New, In progress, Waiting on user, Resolved) and the transitions allowed between them; an unassigned request cannot be started.',
     'Target time by priority: Urgent 4 hours, Normal 24 hours, Low 72 hours. A request past its target is flagged.',
     'Status transitions, validation and time calculation are functions kept apart from the interface and written test-first (TDD).',
     'Status changes with a button, not drag and drop; the board works with a keyboard and on a phone.',

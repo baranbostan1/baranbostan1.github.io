@@ -9,6 +9,7 @@ const PAGE_EN = '/en/projects/helpdesk/';
 const DEMO_PAGE = '/demo/destek-talepleri/';
 const STORAGE_KEY = 'portfolio.helpdesk-demo.v1';
 const SEED_COUNT = 9;
+const ANNOUNCE_WAIT_MS = 120;
 const UNASSIGNED_TITLE = 'Toplantı odasında Wi-Fi bağlanmıyor';
 const XSS_TITLE = '<img src=x onerror=alert(1)>';
 const shotDir = process.argv[2];
@@ -19,7 +20,11 @@ const card = (page, title) => page.locator('[data-ticket]', { hasText: title });
 const columnOf = (page, title) => card(page, title).evaluate((node) => node.closest('[data-column]').dataset.column);
 const ticketCount = (page) => page.locator('[data-ticket]').count();
 const summaryValue = (page, index) => page.locator('[data-summary] dd').nth(index).textContent();
-const announced = (page) => page.locator('[data-status]').textContent();
+// Duyuru alanı önce boşaltılıp bir kare sonra yazılır; okumadan önce kısa bir bekleme gerekir.
+const announced = async (page) => {
+  await page.waitForTimeout(ANNOUNCE_WAIT_MS);
+  return page.locator('[data-status]').textContent();
+};
 // Odak, eylemin yapıldığı talebin içinde mi (BODY'ye düşmedi mi)?
 const focusInside = (page, title) => card(page, title).evaluate((node) => node.contains(document.activeElement));
 const act = (page, title, name) => card(page, title).locator('[data-action]', { hasText: name }).click();
@@ -53,6 +58,8 @@ async function walkTicket(page, tag) {
     check(tag(`${name}: açık talep sayısı`), open === openAtStart + delta, `${open}`);
     check(tag(`${name}: odak talepte kalır`), await focusInside(page, title));
   }
+  const choices = await card(page, title).locator('[data-assign] option').allTextContents();
+  check(tag('işlemdeki talep sahipsiz bırakılamaz'), !choices.includes('Atanmamış'), choices.join('|'));
   check(tag('çözülmüş talepte atama kapalı'), await card(page, 'VPN bağlantısı kopuyor').locator('[data-assign]').isDisabled());
 }
 
@@ -135,6 +142,8 @@ try {
     await page.locator('a[hreflang="en"]').first().click();
     await page.waitForSelector('[data-helpdesk-demo][data-ready]');
     check(tag('dil değiştirici İngilizce sayfaya gider'), new URL(page.url()).pathname === PAGE_EN, page.url());
+    // Türkçe sayfada yapılan değişiklikler İngilizce panoya taşmaz.
+    check(tag('İngilizce: Türkçe panonun kaydı taşmaz'), (await ticketCount(page)) === SEED_COUNT);
     check(tag('İngilizce: başlangıç talepleri İngilizce'), (await card(page, 'Meeting room Wi-Fi will not connect').count()) === 1);
     check(tag('İngilizce: "Concept" rozeti ve "Status" başlığı'), (await page.locator('.concept-badge', { hasText: 'Concept' }).isVisible()) && (await page.locator('article h2').allTextContents()).includes('Status'));
 

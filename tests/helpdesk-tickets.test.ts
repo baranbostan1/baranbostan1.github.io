@@ -93,8 +93,16 @@ describe('assign', () => {
     expect(assign(at('new', { assignee: null }), 'Deniz')).toMatchObject({ ok: true, ticket: { assignee: 'Deniz' } });
   });
 
-  it('açık talebin ataması kaldırılabilir', () => {
-    expect(assign(at('waiting'), null)).toMatchObject({ ok: true, ticket: { assignee: null } });
+  it('yeni talebin ataması kaldırılabilir', () => {
+    expect(assign(at('new'), null)).toMatchObject({ ok: true, ticket: { assignee: null } });
+  });
+
+  it.each(['inProgress', 'waiting'] as const)('%s durumundaki talep sahipsiz bırakılamaz', (status) => {
+    expect(assign(at(status), null)).toEqual({ ok: false, error: 'ownerRequired' });
+  });
+
+  it.each(['inProgress', 'waiting'] as const)('%s durumundaki talep başka birine devredilebilir', (status) => {
+    expect(assign(at(status), 'Emre')).toMatchObject({ ok: true, ticket: { assignee: 'Emre' } });
   });
 
   it('çözülmüş talebin ataması değiştirilemez', () => {

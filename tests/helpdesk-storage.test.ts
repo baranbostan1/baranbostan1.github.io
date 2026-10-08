@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { KeyValueStore } from '../src/demos/agency/storage';
 import { materializeSeed } from '../src/demos/helpdesk/seed';
-import { HELPDESK_STORAGE_KEY, loadTickets, saveTickets } from '../src/demos/helpdesk/storage';
+import { clearTickets, HELPDESK_STORAGE_KEY, loadTickets, saveTickets, storageKeyFor } from '../src/demos/helpdesk/storage';
 import { ASSIGNEES, STATUSES, type Ticket } from '../src/demos/helpdesk/tickets';
 import { isOverdue } from '../src/demos/helpdesk/timing';
 
@@ -105,6 +105,8 @@ describe('loadTickets', () => {
     ['metin olarak zaman', [{ ...valid, openedAt: 'dün' }]],
     ['çözülmüş ama çözüm zamanı yok', [{ ...valid, status: 'resolved', resolvedAt: null }]],
     ['açık ama çözüm zamanı var', [{ ...valid, status: 'new', resolvedAt: 5 }]],
+    ['atanmamış ama işlemde', [{ ...valid, assignee: null }]],
+    ['atanmamış ama çözülmüş', [{ ...valid, assignee: null, status: 'resolved', resolvedAt: NOW }]],
     ['yinelenen kimlik', [valid, { ...valid }]],
   ])('%s → başlangıç verisi', (_label, value) => {
     expect(loadTickets(stored(value), NOW)).toEqual(seed);
@@ -118,8 +120,8 @@ describe('loadTickets', () => {
     expect(loadTickets(throwingStore(), NOW)).toEqual(seed);
   });
 
-  it('ataması kaldırılmış açık talep geçerlidir (kurallar buna izin verir)', () => {
-    const unassigned = [{ ...valid, assignee: null }];
+  it('atanmamış yeni talep geçerlidir', () => {
+    const unassigned = [{ ...valid, assignee: null, status: 'new' as const }];
     expect(loadTickets(stored(unassigned), NOW)).toEqual(unassigned);
   });
 
@@ -132,6 +134,29 @@ describe('loadTickets', () => {
 
   it('fazladan alanları atar', () => {
     expect(loadTickets(stored([{ ...valid, hacked: '<script>' }]), NOW)).toEqual([valid]);
+  });
+});
+
+describe('dile göre depolama', () => {
+  it('Türkçe ve İngilizce sayfalar ayrı anahtar kullanır', () => {
+    expect(storageKeyFor('tr')).toBe(HELPDESK_STORAGE_KEY);
+    expect(storageKeyFor('en')).not.toBe(HELPDESK_STORAGE_KEY);
+  });
+
+  it('bir dilde kaydedilen talepler öteki dilin panosuna taşmaz', () => {
+    const store = fakeStore({});
+    saveTickets(store, [valid], 'tr');
+    expect(loadTickets(store, NOW, 'tr')).toEqual([valid]);
+    expect(loadTickets(store, NOW, 'en')).toEqual(materializeSeed(NOW, 'en'));
+  });
+
+  it('sıfırlama yalnızca o dilin kaydını siler', () => {
+    const store = fakeStore({});
+    saveTickets(store, [valid], 'tr');
+    saveTickets(store, [valid], 'en');
+    clearTickets(store, 'en');
+    expect(loadTickets(store, NOW, 'tr')).toEqual([valid]);
+    expect(loadTickets(store, NOW, 'en')).toEqual(materializeSeed(NOW, 'en'));
   });
 });
 

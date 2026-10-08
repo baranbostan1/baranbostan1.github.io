@@ -45,7 +45,7 @@ export type DraftError = 'titleLength' | 'categoryInvalid' | 'priorityInvalid' |
 export type DraftErrors = Partial<Record<keyof TicketDraft, DraftError>>;
 export type DraftValidation = { ok: true; ticket: Ticket } | { ok: false; errors: DraftErrors };
 export type ActionError = 'notAllowed' | 'unassigned';
-export type AssignError = 'resolved' | 'unknownAssignee';
+export type AssignError = 'resolved' | 'unknownAssignee' | 'ownerRequired';
 export type Result<E> = { ok: true; ticket: Ticket } | { ok: false; error: E };
 
 // Her durumdan hangi eylemle hangi duruma geçilir. Tabloda olmayan her geçiş reddedilir.
@@ -90,9 +90,13 @@ export function applyAction(ticket: Ticket, action: TicketAction, now: number): 
   return { ok: true, ticket: { ...ticket, status: target, resolvedAt: target === 'resolved' ? now : null } };
 }
 
-/** Talebi birine atar ya da atamayı kaldırır (null). Çözülmüş talebin ataması değişmez. */
+/**
+ * Talebi birine atar ya da atamayı kaldırır (null). Çözülmüş talebin ataması değişmez.
+ * Atama yalnızca yeni talepte kaldırılabilir: işleme alınmış bir talep devredilir, sahipsiz bırakılmaz.
+ */
 export function assign(ticket: Ticket, assignee: string | null): Result<AssignError> {
   if (ticket.status === 'resolved') return { ok: false, error: 'resolved' };
+  if (assignee === null && ticket.status !== 'new') return { ok: false, error: 'ownerRequired' };
   if (assignee !== null && !ASSIGNEES.includes(assignee)) return { ok: false, error: 'unknownAssignee' };
   return { ok: true, ticket: { ...ticket, assignee } };
 }

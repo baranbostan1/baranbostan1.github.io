@@ -32,7 +32,9 @@ function assignSelect(ticket: Ticket, strings: HelpdeskStrings): HTMLLabelElemen
   select.setAttribute('aria-label', `${strings.assigneeLabel}: ${ticket.title}`);
   const none = el('option', '', strings.unassigned);
   none.value = '';
-  select.append(none, ...ASSIGNEES.map((name) => el('option', '', name)));
+  // "Atanmamış" yalnızca henüz kimseye verilmemiş talepte sunulur: işlemdeki talep devredilir, sahipsiz bırakılmaz.
+  const options = ASSIGNEES.map((name) => el('option', '', name));
+  select.append(...(ticket.status === 'new' ? [none, ...options] : options));
   select.value = ticket.assignee ?? '';
   // Çözülmüş talebin ataması değişmez (kural tickets.ts'te); alan da buna göre kapalıdır.
   select.disabled = ticket.status === 'resolved';

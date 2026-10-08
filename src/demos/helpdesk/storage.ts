@@ -7,6 +7,9 @@ import { ASSIGNEES, CATEGORIES, PRIORITIES, REQUESTER_MAX, REQUESTER_MIN, STATUS
 
 export const HELPDESK_STORAGE_KEY = 'portfolio.helpdesk-demo.v1';
 
+/** Başlangıç talepleri dile göre yazıldığı için her dilin panosu ayrı saklanır; biri ötekine taşmaz. */
+export const storageKeyFor = (locale: Locale): string => (locale === 'tr' ? HELPDESK_STORAGE_KEY : `${HELPDESK_STORAGE_KEY}.${locale}`);
+
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 const isId = (value: unknown): value is string => typeof value === 'string' && value.trim() !== '';
 const isTextBetween = (value: unknown, min: number, max: number): value is string =>
@@ -21,6 +24,8 @@ function toTicket(value: unknown): Ticket | null {
   if (!isId(id) || !isTextBetween(title, TITLE_MIN, TITLE_MAX) || !isTextBetween(requester, REQUESTER_MIN, REQUESTER_MAX)) return null;
   if (!isOneOf(CATEGORIES, category) || !isOneOf(PRIORITIES, priority) || !isOneOf(STATUSES, status)) return null;
   if (assignee !== null && !isOneOf(ASSIGNEES, assignee)) return null;
+  // Yalnızca yeni talep sahipsiz olabilir (kural tickets.ts'te).
+  if (assignee === null && status !== 'new') return null;
   if (!isTime(openedAt)) return null;
   // Çözüm zamanı yalnızca çözülmüş talepte bulunur; ikisi birbirini tutmuyorsa kayıt geçersizdir.
   const resolved = status === 'resolved' ? (isTime(resolvedAt) ? resolvedAt : undefined) : resolvedAt === null ? null : undefined;
@@ -42,7 +47,7 @@ function parseTickets(raw: string): Ticket[] | null {
 export function loadTickets(store: KeyValueStore | null, now: number, locale: Locale = 'tr'): Ticket[] {
   if (store === null) return materializeSeed(now, locale);
   try {
-    const raw = store.getItem(HELPDESK_STORAGE_KEY);
+    const raw = store.getItem(storageKeyFor(locale));
     return (raw === null ? null : parseTickets(raw)) ?? materializeSeed(now, locale);
   } catch {
     // Bozuk JSON ya da erişilemeyen depolama: demo çökmez, baştan başlar.
@@ -51,19 +56,19 @@ export function loadTickets(store: KeyValueStore | null, now: number, locale: Lo
 }
 
 /** Talepleri kaydeder. Depolama yoksa ya da yazılamıyorsa (kota, gizli sekme) false döner. */
-export function saveTickets(store: KeyValueStore | null, tickets: readonly Ticket[]): boolean {
+export function saveTickets(store: KeyValueStore | null, tickets: readonly Ticket[], locale: Locale = 'tr'): boolean {
   if (store === null) return false;
   try {
-    store.setItem(HELPDESK_STORAGE_KEY, JSON.stringify(tickets));
+    store.setItem(storageKeyFor(locale), JSON.stringify(tickets));
     return true;
   } catch {
     return false;
   }
 }
 
-export function clearTickets(store: KeyValueStore | null): void {
+export function clearTickets(store: KeyValueStore | null, locale: Locale = 'tr'): void {
   try {
-    store?.removeItem(HELPDESK_STORAGE_KEY);
+    store?.removeItem(storageKeyFor(locale));
   } catch {
     // Silinemiyorsa yapılacak bir şey yok; bellekteki liste zaten sıfırlandı.
   }
