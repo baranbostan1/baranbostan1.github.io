@@ -77,7 +77,7 @@ Elle denenmeyenler: gerçek bir iPhone'da video oynatma ve lobi tam ekran yedeğ
 - Kod incelemesinin ertelenen küçük bulguları düzeltildi; tek kalan `.astro` dosyalarında tip denetimi.
 - Görsel bitiş incelemesinin kapsamı sınırlıydı: İngilizce sayfalar yalnızca dört mobil ana sayfa görüntüsünde görüldü; telefon tam ekranındaki lobi paneli verisi yüklenmiş hâlde görülmedi.
 - İnceleme için ekran görüntüsü `node scripts/capture-review.mjs <klasör>` ile alınır (sayfayı kaydırır, görsellerin yüklendiğini doğrular, ekran ekran çeker); tek parça tam sayfa görüntüsü yanıltır.
-- Lighthouse betiği Windows'ta pencere bırakabiliyordu (bir seferinde 51 pencere); artık tarayıcı görünmez çalışır ve her ölçümden sonra temizlik yapılır. Zorla kapatılan pencereler Alt+Tab'da boş kayıt bırakırsa Windows Gezgini yeniden başlatılır.
+- **Lighthouse betiği Alt+Tab'da artık bırakıyor (açık sorun).** Tarayıcı görünmez çalışıyor ve süreç kalmıyor, ama ölçülen her sayfa Alt+Tab listesinde boş bir kayıt bırakıyor (2026-10-07'de 51, 2026-10-08'de 36). Kayıtlar ancak Windows Gezgini yeniden başlatılınca gidiyor. Tarayıcıyı Playwright ile açıp Lighthouse'u ona bağlama denemesi takıldı ve geri alındı. Lighthouse çalıştırmadan önce Baran'a haber verilir; Playwright ile yazılmış doğrulama betikleri artık bırakmıyor.
 - CI'da anonimlik denetimi depo sırrı `ANONYMITY_WORDS` ile çalışır; liste değişirse sır da güncellenir (`gh secret set ANONYMITY_WORDS < anonymity-words.local.txt`).
 - Fontlarda ok karakteri (→) yok; oklar SVG ile çizilir.
 - Higgsfield: 1000 krediden 65,5 harcandı (13 kare, 6 klip). Kayıt: `docs/media-prompts.md`.
