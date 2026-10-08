@@ -7,7 +7,7 @@ Yeni session'da önce bu dosyayı ve `DECISIONS.md`'yi oku.
 **Aşama 1–5 (brainstorming, tasarım bağlamı, plan, prototip, geliştirme):** Tamamlandı.
 **Aşama 6 — Audit:** Tamamlandı. Tasarım dedektörü (bulgu yok), bağımsız kod incelemesi (kritik, önemli ve küçük bulgular düzeltildi) ve impeccable görsel bitiş incelemesi (8 bulgu + 2 yan etki düzeltildi; karar: yayına hazır) yapıldı. `DESIGN.md` yazıldı.
 **Aşama 7 — Doğrulama:** Tamamlandı; rapor aşağıda (Onay F alındı).
-**Aşama 8 — Deploy:** Yayında: https://baranbostan1.github.io (repo: `baranbostan1/baranbostan1.github.io`). **Onay G bekleniyor:** Baran canlı adresi VPN kapalıyken dener.
+**Aşama 8 — Deploy:** Yayında: https://baranbostan1.github.io (repo: `baranbostan1/baranbostan1.github.io`). Onay G alındı (2026-10-08): Baran canlı adresi denedi, sorun bildirmedi.
 **Ek iş — Konsept proje (Ofis IT Destek Talepleri):** Tamamlandı ve yayında (2026-10-08). Spec `docs/helpdesk-spec.md`, plan `docs/helpdesk-plan.md`. Aynı yayında hero altındaki çizgi ve zemin deseninin kesik kenarı da düzeltildi.
 
 ## Plan ilerlemesi
@@ -15,7 +15,7 @@ Yeni session'da önce bu dosyayı ve `DECISIONS.md`'yi oku.
 - [x] Görev 1–14 — İskelet, prototip, üç demo, ana sayfa, CV, 404/SEO
 - [x] Görev 15 — Audit: dedektör, kod incelemesi, görsel bitiş incelemesi, `DESIGN.md`
 - [x] Görev 16 — Doğrulama (Onay F)
-- [x] Görev 17 — Deploy: yayında; **Onay G bekleniyor**
+- [x] Görev 17 — Deploy: yayında; Onay G alındı
 
 Ayrıntılı defter (yerel): `.superpowers/sdd/plan/progress.md`.
 
@@ -55,13 +55,13 @@ Elle denenmeyenler: gerçek bir iPhone'da video oynatma ve lobi tam ekran yedeğ
 
 ## Sıradaki adımlar
 
-1. Onay G: Baran canlı adresi VPN kapalıyken, telefonda ve bilgisayarda dener; QR kodu okutur; LinkedIn paylaşım kartına bakar.
+1. Bekleyen iş yok. Yeni bir iş gelirse önce `DECISIONS.md` okunur.
 2. İsteğe bağlı: `DESIGN.md` içindeki önerilen adların ("Lamba Işığındaki Masa", renk adları) Baran'la gözden geçirilmesi.
-3. GitHub profili: biyografi metni Baran'ın onayını bekliyor; portföy deposunu profilde Baran sabitler (API ile yapılamıyor).
+3. GitHub profili düzenlendi (2026-10-08): portföy dışındaki açık depolar gizlendi, biyografi ve site adresi eklendi. Depo profilde sabitlenmemiş görünüyor; tek açık depo olduğu için yine de profilde listelenir.
 
 ## Baran'dan beklenenler
 
-- **Onay G:** canlı adres denemesi.
+- Bekleyen onay yok.
 - Yayından sonra: gerçek bir telefonda ana sayfa, lobi "Tam ekran" ve QR kod denemesi.
 - İsteğe bağlı: kurgusal adlar için itiraz (restoran `src/demos/qr-menu/data.ts`, otel `src/demos/lobby/config.ts`); QR menü admin panelinin ekran görüntüsü.
 
