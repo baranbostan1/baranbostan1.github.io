@@ -37,16 +37,17 @@
     isolation: isolate;
   }
 
-  /* Zemin düz değildir: sayfa boyunca sağlı sollu yer değiştiren sıcak ışık havuzları (görüntülerdeki lamba ışığının devamı). */
+  /* Zemin düz değildir: sayfa boyunca sağlı sollu yer değiştiren sıcak ışık havuzları (görüntülerdeki lamba ışığının devamı).
+     Havuzlar doğrusal değil, giderek yavaşlayan bir eğriyle söner: doğrusal sönüşün bittiği yerde göz bir çizgi görür. */
   body::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -2;
     background-image:
-      radial-gradient(58rem 36rem at 88% 22rem, oklch(0.74 0.13 62 / 0.11), transparent 70%),
-      radial-gradient(52rem 34rem at 6% 78rem, oklch(0.62 0.12 45 / 0.1), transparent 70%),
-      radial-gradient(46rem 30rem at 70% 132rem, oklch(0.5 0.09 250 / 0.14), transparent 70%);
+      radial-gradient(58rem 36rem at 88% 22rem, oklch(0.74 0.13 62 / 0.11), oklch(0.74 0.13 62 / 0.062) 25%, oklch(0.74 0.13 62 / 0.027) 50%, oklch(0.74 0.13 62 / 0.007) 75%, oklch(0.74 0.13 62 / 0) 100%),
+      radial-gradient(52rem 34rem at 6% 78rem, oklch(0.62 0.12 45 / 0.1), oklch(0.62 0.12 45 / 0.056) 25%, oklch(0.62 0.12 45 / 0.025) 50%, oklch(0.62 0.12 45 / 0.006) 75%, oklch(0.62 0.12 45 / 0) 100%),
+      radial-gradient(46rem 30rem at 70% 132rem, oklch(0.5 0.09 250 / 0.14), oklch(0.5 0.09 250 / 0.079) 25%, oklch(0.5 0.09 250 / 0.035) 50%, oklch(0.5 0.09 250 / 0.009) 75%, oklch(0.5 0.09 250 / 0) 100%);
     background-size: 100% 168rem;
     pointer-events: none;
   }

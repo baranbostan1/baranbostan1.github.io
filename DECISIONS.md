@@ -84,3 +84,8 @@
 - **Talep kutusu "kart yok" kuralının istisnasıdır.** Talep sütunlar arasında taşınan ayrı bir nesne olduğu için kutudadır; ayrıntı `DESIGN.md`'de.
 - **CV'de proje notu değişti:** "Üçü de aynı işletme için…" cümlesi dört maddelik listede yanlış okunacağı için "İlk üçü … sonuncusu konsept çalışmadır" oldu. İngilizce CV'nin tek sayfada kalması için yazdırma boşlukları daraltıldı.
 - **Sahne görüntüsünde ekrandaki sütun başlıkları dört renklidir.** Sitenin arayüzü tek vurgu rengi kullanır; bu bir fotoğraf olduğu için Baran kareleri olduğu gibi onayladı.
+
+### Hero geçişi (2026-10-08)
+
+- **Hero alt kenarda düz renge değil, sayfa zeminine karışarak biter.** Baran hero ile ilk proje arasındaki yatay çizgiden hoşlanmadı. Hero düz zemin rengine sönüyordu, hemen altında ise ışık havuzlu zemin başlıyordu; görüntü ve karartma artık alt 16rem içinde maskeyle saydamlaşır (metin maskelenmez).
+- **Işık havuzları yavaşlayan bir eğriyle söner.** Doğrusal sönüşün bittiği yerde geniş ekranda dikey ve yatay kenar çizgileri görünüyordu.

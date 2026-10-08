@@ -55,6 +55,13 @@ const { hero } = getHome(locale);
     z-index: -2;
   }
 
+  /* Görüntü ve karartma alt kenarda sayfanın zeminine karışarak biter. Düz renge sönseydi, hemen altında başlayan
+     ışık havuzlu zeminle arasında yatay bir çizgi kalırdı (Baran'ın geri bildirimi). Metin maskelenmez. */
+  .hero :global(.hero-media),
+  .hero-scrim {
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 16rem), rgb(0 0 0 / 0.55) calc(100% - 9rem), rgb(0 0 0 / 0.18) calc(100% - 4rem), transparent 100%);
+  }
+
   /* Dar ekranda kadraj sağa kayar; sahnenin öznesi (ekran) görüntüde kalır. */
   .hero :global(.hero-media img),
   .hero :global(.hero-media video) {
