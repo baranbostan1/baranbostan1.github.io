@@ -88,4 +88,5 @@
 ### Hero geçişi (2026-10-08)
 
 - **Hero alt kenarda düz renge değil, sayfa zeminine karışarak biter.** Baran hero ile ilk proje arasındaki yatay çizgiden hoşlanmadı. Hero düz zemin rengine sönüyordu, hemen altında ise ışık havuzlu zemin başlıyordu; görüntü ve karartma artık alt 16rem içinde maskeyle saydamlaşır (metin maskelenmez).
-- **Işık havuzları yavaşlayan bir eğriyle söner.** Doğrusal sönüşün bittiği yerde geniş ekranda dikey ve yatay kenar çizgileri görünüyordu.
+- **Işık havuzları ve imleç ışığı yavaşlayan bir eğriyle söner.** Doğrusal sönüşün bittiği yerde geniş ekranda kenar çizgileri görünüyordu.
+- **Her ışık havuzu kendi karosunun içinde kalır.** Zemin deseni 168rem aralıkla yinelenir; karo kenarını aşan sıcak havuz sayfanın sağında düz bir yatay çizgiyle kesiliyordu (Baran ikinci çizgiyi de gösterdi). Havuzun merkezi aşağı alındı.
