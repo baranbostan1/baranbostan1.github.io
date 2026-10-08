@@ -108,6 +108,7 @@ try {
     const summary = await page.locator('[data-summary] dd').allTextContents();
     check(tag('özet değerleri'), summary.join('|') === '8|3|2|2 gün', summary.join('|'));
     check(tag('hedefi aşan iki talep işaretli'), (await page.locator('.hd-overdue:visible').count()) === 2);
+    check(tag('özetin erişilebilir adı bir grupta'), (await page.getByRole('group', { name: 'Pano özeti' }).locator('[data-summary]').count()) === 1);
     check(tag('"Konsept" rozeti görünür'), await page.locator('.concept-badge', { hasText: 'Konsept' }).isVisible());
     const h2s = await page.locator('article h2').allTextContents();
     check(tag('"Senaryo" ve "Durum" başlıkları var, "Sorun" ve "Sonuç" yok'), h2s.includes('Senaryo') && h2s.includes('Durum') && !h2s.includes('Sorun') && !h2s.includes('Sonuç'), h2s.join('|'));
@@ -149,6 +150,8 @@ try {
 
     // Tam ekran demo sayfası.
     await open(DEMO_PAGE);
+    const demoHeads = await page.locator('h1, h2, h3, h4, h5').evaluateAll((nodes) => nodes.map((node) => Number(node.tagName[1])));
+    check(tag('tam ekran demo: başlık sırası atlamaz'), demoHeads.every((level, index) => index === 0 || level <= demoHeads[index - 1] + 1), demoHeads.join(''));
     check(tag('tam ekran demo: 9 talep'), (await ticketCount(page)) === SEED_COUNT);
     check(tag('tam ekran demo: yatay taşma yok'), !(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)));
 
@@ -180,7 +183,7 @@ try {
   const staticContext = await browser.newContext({ viewport: { width: 1440, height: 900 }, javaScriptEnabled: false });
   const staticPage = await staticContext.newPage();
   await staticPage.goto(BASE_URL + PAGE, { waitUntil: 'load' });
-  check('[JavaScript kapalı] 9 talep okunur', (await staticPage.locator('[data-ticket]').count()) === SEED_COUNT);
+  check('[JavaScript kapalı] 9 talep okunur ve görünür', (await staticPage.locator('[data-ticket]').count()) === SEED_COUNT && (await staticPage.locator('[data-ticket]').first().isVisible()));
   await staticContext.close();
 } finally {
   await browser.close();

@@ -22,11 +22,14 @@ const balances = agencyBalances(SEED);
   <p class="ag-note">{s.fictionalNote}</p>
   <p class="ag-note ag-note-warn" data-memory-note hidden>{s.memoryOnlyNote}</p>
 
-  <dl class="ag-summary" data-summary aria-label={s.summaryLabel}>
+  {/* Ad listeye değil gruba verilir: dl'nin erişilebilir adı her ekran okuyucuda okunmaz. */}
+  <div role="group" aria-label={s.summaryLabel}>
+  <dl class="ag-summary" data-summary>
     <div><dt>{s.totalInvoiced}</dt><dd>{money(totals.invoicedKurus)}</dd></div>
     <div><dt>{s.totalPaid}</dt><dd>{money(totals.paidKurus)}</dd></div>
     <div><dt>{s.openBalance}</dt><dd>{money(totals.balanceKurus)}</dd></div>
   </dl>
+  </div>
 
   <div class="ag-main">
     <form class="ag-form" data-form novalidate>

@@ -35,12 +35,15 @@ const duration = (minutes: number) => formatDuration(minutes, locale);
     </div>
   </div>
 
-  <dl class="hd-summary" data-summary aria-label={s.summaryLabel}>
+  {/* Ad listeye değil gruba verilir: dl'nin erişilebilir adı her ekran okuyucuda okunmaz. */}
+  <div role="group" aria-label={s.summaryLabel}>
+  <dl class="hd-summary" data-summary>
     <div><dt>{s.summaryOpen}</dt><dd>{totals.open}</dd></div>
     <div><dt>{s.summaryUrgent}</dt><dd>{totals.urgentOpen}</dd></div>
     <div><dt>{s.summaryOverdue}</dt><dd>{totals.overdue}</dd></div>
     <div><dt>{s.summaryLongest}</dt><dd>{totals.longestOpenMinutes === null ? s.none : duration(totals.longestOpenMinutes)}</dd></div>
   </dl>
+  </div>
 
   <form class="hd-form" data-form novalidate>
     <h3>{s.formHeading}</h3>
@@ -116,8 +119,9 @@ const duration = (minutes: number) => formatDuration(minutes, locale);
     try {
       initHelpdeskBoard(root);
     } catch (error) {
-      // Betik çalışmazsa sunucuda çizilen başlangıç panosu görünmeye devam eder.
+      // Betik çalışmazsa sunucuda çizilen başlangıç panosu görünür kalır.
       console.error('[destek]', error);
+      root.setAttribute('data-ready', '');
     }
   });
 </script>
@@ -422,6 +426,15 @@ const duration = (minutes: number) => formatDuration(minutes, locale);
     to {
       border-color: var(--color-line);
       background-color: var(--color-surface);
+    }
+  }
+
+  /* Betik açıkken pano ve özet, kayıtlı talepler yüklenene kadar gizli kalır: geri gelen ziyaretçi bir an başlangıç
+     panosunu görüp sonra kendi panosuna atlamasın. Yer ayrılır, düzen kaymaz. Betik kapalıyken başlangıç panosu görünür. */
+  @media (scripting: enabled) {
+    .hd-demo:not([data-ready]) .hd-board,
+    .hd-demo:not([data-ready]) .hd-summary dd {
+      visibility: hidden;
     }
   }
 

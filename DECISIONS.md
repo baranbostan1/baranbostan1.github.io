@@ -80,7 +80,9 @@
 - **Başlangıç verisi iki dillidir.** Plan tek dilli veri öngörüyordu; İngilizce sayfada Türkçe talep başlıkları görünmesin diye başlıklar iki dilde tutulur. Bu yüzden her dilin panosu ayrı saklanır (Türkçe `portfolio.helpdesk-demo.v1`, İngilizce aynı anahtarın `.en` ekli hali); bir dilde yapılan değişiklik öteki dilin panosuna taşmaz.
 - **Yalnızca yeni talep sahipsiz olabilir.** İşleme alınmış bir talep başka birine devredilebilir ama sahipsiz bırakılamaz; aksi halde "atanmamış talep işleme alınamaz" kuralı sonradan atama kaldırılarak aşılabilirdi (kod incelemesinin bulgusu). Arayüz "Atanmamış" seçeneğini yalnızca yeni talepte sunar; depolama doğrulaması da aynı kuralı uygular.
 - **Duyuru alanı her mesajdan önce boşaltılır.** Aynı uyarı art arda geldiğinde ekran okuyucu yeniden okusun diye (kod incelemesinin bulgusu).
-- **Talep kutusu ayrı bir dosyada kurulur** (`src/demos/helpdesk/card.ts`); plan tek dosya (`board.ts`) öngörüyordu, dosya boyutu sınırı için ayrıldı.
+- **Demo arayüzü üç dosyaya bölündü:** `card.ts` (talep kutusu), `view.ts` (çizim ve form), `board.ts` (durum ve olaylar). Plan tek dosya öngörüyordu; fonksiyon ve dosya boyutu sınırı için ayrıldı.
+- **Tam ekran demo sayfalarında görünmez bir "Demo" h2 başlığı var.** Demolar h3 ile başladığı için başlık sırası h1'den h3'e atlıyordu; dört demo sayfası için tek yerden düzeltildi.
+- **Betik açıkken pano, kayıtlı talepler yüklenene kadar gizli kalır.** Geri gelen ziyaretçi bir an başlangıç panosunu görüp kendi panosuna atlamasın diye; betik kapalıyken ya da hata verirse başlangıç panosu görünür.
 - **Talep kutusu "kart yok" kuralının istisnasıdır.** Talep sütunlar arasında taşınan ayrı bir nesne olduğu için kutudadır; ayrıntı `DESIGN.md`'de.
 - **CV'de proje notu değişti:** "Üçü de aynı işletme için…" cümlesi dört maddelik listede yanlış okunacağı için "İlk üçü … sonuncusu konsept çalışmadır" oldu. İngilizce CV'nin tek sayfada kalması için yazdırma boşlukları daraltıldı.
 - **Sahne görüntüsünde ekrandaki sütun başlıkları dört renklidir.** Sitenin arayüzü tek vurgu rengi kullanır; bu bir fotoğraf olduğu için Baran kareleri olduğu gibi onayladı.

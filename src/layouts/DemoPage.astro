@@ -33,6 +33,8 @@ const page = demoPageFor(id);
       <LangSwitch page={page} locale={locale} />
     </div>
     <h1 class="sr-only">{project.title} · {ui.fullscreenDemoTitle}</h1>
+    {/* Demolar proje sayfasında bir h2'nin altında durur ve h3 ile başlar; burada da başlık sırası atlamasın. */}
+    <h2 class="sr-only">{ui.demoLabel}</h2>
     <div class:list={['demo-body', { 'demo-body-flush': flush }]}>
       <slot />
     </div>
