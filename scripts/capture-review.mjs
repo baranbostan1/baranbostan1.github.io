@@ -25,6 +25,7 @@ const PAGES = [
   { slug: 'qr-menu', route: '/projeler/qr-menu/' },
   { slug: 'lobi-ekrani', route: '/projeler/lobi-ekrani/' },
   { slug: 'acenta-takibi', route: '/projeler/acenta-takibi/' },
+  { slug: 'destek-talepleri', route: '/projeler/destek-talepleri/' },
   { slug: 'cv', route: '/cv/' },
 ];
 const SETTLE_MS = 350;

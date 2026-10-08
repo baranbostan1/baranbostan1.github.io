@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { sceneProblems } from '../scripts/check-build.mjs';
 
 const scene = (name: string) => `<div class="scene-media" data-scene="${name}"><img src="/media/${name}-poster.webp"><video data-src-lg="/media/${name}-lg.mp4"></video></div>`;
-const SCENES = ['hero', 'qr-menu', 'lobby', 'agency', 'closing'];
+const SCENES = ['hero', 'qr-menu', 'lobby', 'agency', 'helpdesk', 'closing'];
 
 describe('sceneProblems', () => {
-  it('beş sahnesi de görüntüsüyle çıkmış sayfada sorun bulmaz', () => {
+  it('altı sahnesi de görüntüsüyle çıkmış sayfada sorun bulmaz', () => {
     expect(sceneProblems(SCENES.map(scene).join(''), SCENES)).toEqual([]);
   });
 
@@ -18,7 +18,7 @@ describe('sceneProblems', () => {
   });
 
   it('hiç çıkmamış sahneyi bildirir', () => {
-    expect(sceneProblems(SCENES.slice(0, 4).map(scene).join(''), SCENES).join(' ')).toContain('closing');
+    expect(sceneProblems(SCENES.slice(0, 5).map(scene).join(''), SCENES).join(' ')).toContain('closing');
   });
 
   it('sayfada yer tutucu kalmışsa bildirir', () => {

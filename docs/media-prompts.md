@@ -21,6 +21,8 @@ Ortak kurallar (her istemde): insan, el, yüz yok; okunabilir yazı, harf, rakam
 | agency | Klip: yığın kendiliğinden derlenir, monitörde tablo satır satır dolar | Kling 3.0 Pro | aynı |
 | closing | Bitiş karesi: yan yana üç açık ekran (telefon, monitör, dizüstü); başlangıç karesi ondan türetildi (ekranlar kapalı) | GPT Image 2.5 | aynı |
 | closing | Klip: ekranlar soldan sağa sırayla açılır | Kling 3.0 Pro | aynı |
+| helpdesk | Başlangıç karesi: kapalı monitör, çerçevesinde ve masada yapışkan notlar; bitiş karesi ondan türetildi (notlar yok, ekranda dört sütunlu pano) | GPT Image 2.5 | aynı |
+| helpdesk | Klip: notlar tek tek kalkıp ekrana doğru kaybolur, ekran açılır, sütunlar dolar | Kling 3.0 Pro | aynı |
 
 ## İstem özetleri
 
@@ -31,6 +33,9 @@ Ortak kurallar (her istemde): insan, el, yüz yok; okunabilir yazı, harf, rakam
 - **qr-menu / başlangıç v2:** Aynı kare; karttaki bulaşık çizgiler yerine keskin baskı düzeni: üstte küçük bir süs ve başlık çubuğu, üç bölüm, her satırda solda çubuk, noktalı çizgi, sağda kısa fiyat çubuğu. Harf ve rakam yok.
 - **qr-menu / bitiş:** Aynı kare; kartın yerinde, aynı tutucuda dik duran markasız bir telefon. Ekranda koyu temalı dijital menü: başlık, kategori çipleri, küçük görselli satırlar; yazılar okunmaz çizgiler.
 - **qr-menu / klip:** Sabit kamera. Kâğıt kart yerinde telefona dönüşür: kenarlar ince koyu gövdeye, kâğıt parlayan ekrana, basılı satırlar dijital listeye. Bardak, peçete ve arka plan yerinde; yalnızca mum alevi titrer.
+- **helpdesk / başlangıç:** Sinematik geniş kare, gece. Hafif yukarıdan üç çeyrek açıyla koyu ahşap ofis masası. Sağ yarıda kapalı, markasız bir monitör; çerçevesine üst üste yapıştırılmış ve masaya dağılmış sarı-turuncu yapışkan notlar, üzerlerinde okunmaz karalama çizgiler. Düz klavye, düz kupa, kalem. Sağdan sıcak kehribar lamba ışığı; sol üçte bir neredeyse siyah ve boş.
+- **helpdesk / bitiş:** Aynı kare; yalnızca şu değişir: bütün notlar gitmiş, masa temiz. Monitör açık; koyu temalı, dört dikey sütunlu düzenli bir pano. Kutularda yalnızca kısa yer tutucu çubuklar, birkaçında kehribar bir çubuk. Çerçevede logo yok.
+- **helpdesk / klip:** Sabit kamera. Notlar tek tek kalkıp karanlık ekrana doğru süzülür ve içinde kaybolur; ardından ekran açılır, pano sütun sütun, kutu kutu dolar. Lamba, kupa, klavye, kalem ve arka plan kıpırdamaz.
 
 ## Harcama
 
@@ -40,4 +45,6 @@ Ortak kurallar (her istemde): insan, el, yüz yok; okunabilir yazı, harf, rakam
 | 2026-10-07 | 2 klip | 17,5 |
 | 2026-10-07 | 6 sabit kare (lobi, acenta, kapanış) | 6 |
 | 2026-10-07 | 3 klip (lobi, acenta, kapanış) | 26,25 |
-| | **Toplam** | **54,75** |
+| 2026-10-08 | 2 sabit kare (destek talepleri) | 2 |
+| 2026-10-08 | 1 klip (destek talepleri) | 8,75 |
+| | **Toplam** | **65,5** |

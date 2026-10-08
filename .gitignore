@@ -24,3 +24,6 @@ media-src/
 # Eski adlandırmadan kalan medya (silinecek)
 public/media/*-scrub.mp4
 public/media/*-loop.mp4
+
+# Doğrulama ekran görüntüleri (yerel)
+.shots/

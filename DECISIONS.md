@@ -71,3 +71,15 @@
 - **GitHub'a tek commit'lik yeni bir geçmiş gönderildi.** Baran'ın kararı. Geliştirme geçmişi yerelde `yerel-gecmis` dalında kalır ve push edilmez.
 - **Yazar adı bu repoda "Baran Berkay Bostan".** E-posta GitHub'ın gizli adresi.
 - **Pages kaynağı GitHub Actions.** Repo adı nedeniyle Pages kendiliğinden dal yayınıyla açılmıştı; Actions'a çevrildi.
+
+### Konsept proje: Ofis IT Destek Talepleri (2026-10-08)
+
+- **Dördüncü proje bir konsept çalışmadır ve öyle etiketlenir.** Baran'ın amacı otel dışında da üretebildiğini göstermek. Proje gerçek bir işletmede kullanılmadı; sitede "Konsept" rozeti, ana sayfada ayrı "Konsept çalışma" başlığı ve "Sorun / Sonuç" yerine "Senaryo / Durum" ("Ne gösteriyor") başlıkları bunu açıkça söyler. Hero'daki "üç araç" ifadesi değişmedi.
+- **Kapsam: talep panosu ve talep açma.** Rapor ekranı, bildirim, kullanıcı girişi, sürükle-bırak, mesai saatine göre hedef ve talep silme kapsam dışı (spec §9).
+- **Durum düğmeyle değişir, sürükle-bırak yok.** Klavye ve telefonda aynı şekilde çalışır.
+- **Başlangıç verisi iki dillidir.** Plan tek dilli veri öngörüyordu; İngilizce sayfada Türkçe talep başlıkları görünmesin diye başlıklar iki dilde tutulur. Depolama anahtarı ortaktır; ziyaretçinin açtığı talepler yazdığı dilde kalır.
+- **Ataması kaldırılmış açık talep geçerli bir durumdur.** Kurallar açık talebin atamasının kaldırılmasına izin verir; depolama doğrulaması da bunu kabul eder (aksi halde sayfa yenilenince pano sıfırlanırdı). Yalnızca "yeni" bir talep atanmadan işleme alınamaz.
+- **Talep kutusu ayrı bir dosyada kurulur** (`src/demos/helpdesk/card.ts`); plan tek dosya (`board.ts`) öngörüyordu, dosya boyutu sınırı için ayrıldı.
+- **Talep kutusu "kart yok" kuralının istisnasıdır.** Talep sütunlar arasında taşınan ayrı bir nesne olduğu için kutudadır; ayrıntı `DESIGN.md`'de.
+- **CV'de proje notu değişti:** "Üçü de aynı işletme için…" cümlesi dört maddelik listede yanlış okunacağı için "İlk üçü … sonuncusu konsept çalışmadır" oldu. İngilizce CV'nin tek sayfada kalması için yazdırma boşlukları daraltıldı.
+- **Sahne görüntüsünde ekrandaki sütun başlıkları dört renklidir.** Sitenin arayüzü tek vurgu rengi kullanır; bu bir fotoğraf olduğu için Baran kareleri olduğu gibi onayladı.

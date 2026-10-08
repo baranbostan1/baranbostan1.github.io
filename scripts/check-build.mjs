@@ -1,11 +1,11 @@
-// Derleme çıktısı denetimi: ana sayfalarda beş sahnenin de gerçek görüntüsüyle çıktığını doğrular.
+// Derleme çıktısı denetimi: ana sayfalarda altı sahnenin de gerçek görüntüsüyle çıktığını doğrular.
 // Neden var: sahne bileşeni medya dosyasını bulamazsa yer tutucu çizer; bu, geliştirme sunucusunda
 // görünmeyip yalnızca derlemede ortaya çıkabilir. Böyle bir derleme yayına gitmemelidir.
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const SCENES = ['hero', 'qr-menu', 'lobby', 'agency', 'closing'];
+const SCENES = ['hero', 'qr-menu', 'lobby', 'agency', 'helpdesk', 'closing'];
 const HOME_PAGES = [path.join('dist', 'index.html'), path.join('dist', 'en', 'index.html')];
 
 /**

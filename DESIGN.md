@@ -254,6 +254,9 @@ Denetimler ince çizgili ve sakin durur; dolgu yalnızca eylem anında ya da se�
 - **Kart yok.** Proje bölümleri kutuya alınmaz; görüntü ve metin doğrudan zemin üstünde durur. Gruplama boşlukla ve 1px çizgiyle yapılır.
 - **Veri şeridi:** Üstte ve altta 1px `line`, dikey 1rem boşluk; soluk etiket üstte, mono değer altta. Ana sayfada canlı saat/kur şeridi ve bakiye sayacı, demoda özet satırı bu kalıbı kullanır.
 - **Cihaz gövdeleri:** Yalnızca demolar için; bkz. Shapes ve Elevation.
+- **Pano sütunu (destek talepleri demosu):** Başlık gövde fontunda, 500 ağırlık; sağında mono talep sayısı; altında 1px `line`. 1024px ve üstünde dört sütun yan yana, altında tek sütun.
+- **Talep kutusu (destek talepleri demosu):** "Kart yok" kuralının tek istisnası; talep taşınan, ayrı bir nesne olduğu için kutudadır. `surface` dolgu, 1px `line` çerçeve, keskin köşe, 1rem iç boşluk, gölge yok. Başlık gövde fontunda; süre mono; "Acil" kehribar, "Hedefi aştı" `danger` ve her ikisi de metinle yazılır. Kutudaki ilk eylem Outline, diğerleri Quiet düğmedir (2.75rem).
+- **Konsept rozeti:** 1px kehribar çerçeveli, keskin köşeli düz metin; başlığın üstünde değil yanında durur, dar ekranda alt satıra iner. Yalnızca gerçek kullanımda olmayan projeyi işaretler.
 
 ### Inputs / Fields
 - **Style:** `surface` dolgu, 1px `line` çerçeve, keskin köşe, 2.875rem yükseklik, 1rem metin; etiket alanın üstünde, 500 ağırlık; ipucu altında `ink-soft`.

@@ -8,6 +8,7 @@ Yeni session'da önce bu dosyayı ve `DECISIONS.md`'yi oku.
 **Aşama 6 — Audit:** Tamamlandı. Tasarım dedektörü (bulgu yok), bağımsız kod incelemesi (kritik, önemli ve küçük bulgular düzeltildi) ve impeccable görsel bitiş incelemesi (8 bulgu + 2 yan etki düzeltildi; karar: yayına hazır) yapıldı. `DESIGN.md` yazıldı.
 **Aşama 7 — Doğrulama:** Tamamlandı; rapor aşağıda (Onay F alındı).
 **Aşama 8 — Deploy:** Yayında: https://baranbostan1.github.io (repo: `baranbostan1/baranbostan1.github.io`). **Onay G bekleniyor:** Baran canlı adresi VPN kapalıyken dener.
+**Ek iş — Konsept proje (Ofis IT Destek Talepleri):** Yerelde `main` üzerinde geliştirildi; spec `docs/helpdesk-spec.md`, plan `docs/helpdesk-plan.md`. Yayına gönderilmeden önce **Onay 4** gerekir (Baran bitmiş hali yerelde görür).
 
 ## Plan ilerlemesi
 
@@ -17,6 +18,16 @@ Yeni session'da önce bu dosyayı ve `DECISIONS.md`'yi oku.
 - [x] Görev 17 — Deploy: yayında; **Onay G bekleniyor**
 
 Ayrıntılı defter (yerel): `.superpowers/sdd/plan/progress.md`.
+
+Konsept proje planı (`docs/helpdesk-plan.md`):
+
+- [x] Görev 1–4 — İçerik modeli ve yollar, talep kuralları, süre/hedef hesabı, başlangıç verisi ve depolama (test-önce)
+- [x] Görev 5 — Demo arayüzü, proje ve tam ekran demo sayfaları, `scripts/verify-helpdesk.mjs`
+- [x] Görev 6 — Ana sayfada "Konsept çalışma" bölümü, CV satırı
+- [x] Görev 7 — Sahne görüntüsü (Onay 3 alındı)
+- [ ] Görev 8 — Doğrulama, son kod incelemesi, **Onay 4**, yayın
+
+Defter (yerel): `.superpowers/sdd/helpdesk-plan/progress.md`.
 
 ## Doğrulama raporu (derlenmiş site üzerinde, 2026-10-07)
 
@@ -46,7 +57,7 @@ Elle denenmeyenler: gerçek bir iPhone'da video oynatma ve lobi tam ekran yedeğ
 
 1. Onay G: Baran canlı adresi VPN kapalıyken, telefonda ve bilgisayarda dener; QR kodu okutur; LinkedIn paylaşım kartına bakar.
 2. İsteğe bağlı: `DESIGN.md` içindeki önerilen adların ("Lamba Işığındaki Masa", renk adları) Baran'la gözden geçirilmesi.
-3. Yayından sonra, ayrı iş: dördüncü proje (öneri: arıza ve istek takibi; "konsept" etiketiyle).
+3. Konsept proje: Görev 8 biter, Baran'a gösterilir (Onay 4), sonra `main` push edilir.
 
 ## Baran'dan beklenenler
 
@@ -69,7 +80,9 @@ Elle denenmeyenler: gerçek bir iPhone'da video oynatma ve lobi tam ekran yedeğ
 - Lighthouse betiği Windows'ta pencere bırakabiliyordu (bir seferinde 51 pencere); artık tarayıcı görünmez çalışır ve her ölçümden sonra temizlik yapılır. Zorla kapatılan pencereler Alt+Tab'da boş kayıt bırakırsa Windows Gezgini yeniden başlatılır.
 - CI'da anonimlik denetimi depo sırrı `ANONYMITY_WORDS` ile çalışır; liste değişirse sır da güncellenir (`gh secret set ANONYMITY_WORDS < anonymity-words.local.txt`).
 - Fontlarda ok karakteri (→) yok; oklar SVG ile çizilir.
-- Higgsfield: 1000 krediden 54,75 harcandı (11 kare, 5 klip). Kayıt: `docs/media-prompts.md`.
+- Higgsfield: 1000 krediden 65,5 harcandı (13 kare, 6 klip). Kayıt: `docs/media-prompts.md`.
+- Ana sayfada bir sahne yer tutucuyla çıkarsa `npm run build` bilerek hata verir (`check-build.mjs`); yeni bir sahne eklenirken önce görüntüsü kodlanır.
+- CV iki dilde tek sayfaya ancak sığıyor (İngilizce sürümde birkaç piksel pay var); CV'ye satır eklenirse `npm run build:cv` çıktısındaki sayfa sayısına bakılır.
 - QR Menü sayfasındaki QR kod yayın adresini gösterir; yayından önce telefonda açılmaz.
 - Paylaşım görselleri `npm run build:og`, CV PDF'leri `npm run build:cv` ile yeniden üretilir (CV metni ya da proje özetleri değişirse).
 - Yedek kur API adresi (`pages.dev`) Türkiye'den erişilemiyor olabilir; asıl adres (jsdelivr) çalışıyor.

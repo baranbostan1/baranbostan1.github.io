@@ -11,7 +11,7 @@ const EDGE_PATHS = ['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.ex
 const HOME_ROUTES = new Set(['/', '/en/']);
 // Ana sayfada tam ekran video var: Performance eşiği 90; diğer sayfalarda 95.
 const THRESHOLDS = { home: { performance: 90 }, default: { performance: 95 }, common: { accessibility: 95, 'best-practices': 95, seo: 95 } };
-const ROUTES = ['/', '/en/', '/projeler/qr-menu/', '/projeler/lobi-ekrani/', '/projeler/acenta-takibi/', '/en/projects/qr-menu/', '/en/projects/lobby-display/', '/en/projects/agency-ledger/', '/cv/', '/en/cv/'];
+const ROUTES = ['/', '/en/', '/projeler/qr-menu/', '/projeler/lobi-ekrani/', '/projeler/acenta-takibi/', '/projeler/destek-talepleri/', '/en/projects/qr-menu/', '/en/projects/lobby-display/', '/en/projects/agency-ledger/', '/en/projects/helpdesk/', '/cv/', '/en/cv/'];
 
 const preset = process.argv[2] === 'desktop' ? 'desktop' : 'mobile';
 const chromePath = EDGE_PATHS.find((candidate) => existsSync(candidate));

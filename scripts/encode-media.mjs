@@ -10,7 +10,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 
-const SCENES = ['hero', 'qr-menu', 'lobby', 'agency', 'closing'];
+const SCENES = ['hero', 'qr-menu', 'lobby', 'agency', 'helpdesk', 'closing'];
 const SOURCE_DIR = 'media-src';
 const OUT_DIR = path.join('public', 'media');
 const LARGE = { width: 1920, height: 1080, crf: 27, keyframeInterval: 2, maxBytes: 4 * 1024 * 1024 };
@@ -21,6 +21,8 @@ const OUTPUT_FPS = 24;
 // (ara kareler karıştırılarak üretilir). Hero'da olay 2,0–2,6. saniyelerdedir; gerisi durağan beklemedir.
 const EDITS = {
   hero: { start: 1.7, end: 3.1, slow: 2 },
+  // İlk 1,5 saniye durağan; notlar ondan sonra kalkmaya başlar.
+  helpdesk: { start: 1.5, end: 4.8 },
 };
 // Son kare, kurgusuz kliplerde dosyanın sonundan bu kadar önce alınır.
 const END_STILL_OFFSET = 0.2;
